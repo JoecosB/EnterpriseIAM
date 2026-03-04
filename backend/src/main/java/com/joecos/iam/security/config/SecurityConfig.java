@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.security.config;
+package com.joecos.iam.security.config;
 
 public class SecurityConfig {
 }

@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.infrastructure.persistance.entity;
+package com.joecos.iam.infrastructure.persistance.entity;
 
 public class UserRoleEntity {
 }

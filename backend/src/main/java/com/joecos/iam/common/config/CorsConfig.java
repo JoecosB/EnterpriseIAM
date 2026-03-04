@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.common.config;
+package com.joecos.iam.common.config;
 
 public class CorsConfig {
 }

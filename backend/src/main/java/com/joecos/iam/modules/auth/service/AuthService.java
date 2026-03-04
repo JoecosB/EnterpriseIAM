@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.modules.auth.service;
+package com.joecos.iam.modules.auth.service;
 
 public class AuthService {
 }

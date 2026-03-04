@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.modules.user.service;
+package com.joecos.iam.modules.user.service;
 
 public class UserService {
 }

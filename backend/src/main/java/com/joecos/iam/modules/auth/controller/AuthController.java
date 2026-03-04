@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.modules.auth.controller;
+package com.joecos.iam.modules.auth.controller;
 
 public class AuthController {
 }

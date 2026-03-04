@@ -1,4 +1,4 @@
-package main.java.com.joecos.iam.common.exception;
+package com.joecos.iam.common.exception;
 
 public class GlobalExceptionHandler {
 }
