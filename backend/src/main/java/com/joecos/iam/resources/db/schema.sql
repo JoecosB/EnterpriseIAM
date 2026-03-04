@@ -23,7 +23,7 @@ CREATE TABLE sys_permission (
     id SMALLINT PRIMARY KEY AUTO_INCREMENT,
     permission_name VARCHAR(50) NOT NULL,
     permission_code VARCHAR(100) NOT NULL UNIQUE,
-    type TINYINT NOT NULL,
+    type VARCHAR(50) NOT NULL,
     parent_id SMALLINT DEFAULT NULL,
     path VARCHAR(200),
     component VARCHAR(200),
