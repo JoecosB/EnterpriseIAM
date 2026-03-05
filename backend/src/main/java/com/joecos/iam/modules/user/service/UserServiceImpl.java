@@ -1,0 +1,127 @@
+package com.joecos.iam.modules.user.service;
+
+import com.joecos.iam.infrastructure.persistence.entity.*;
+import com.joecos.iam.infrastructure.persistence.mapper.*;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
+
+    @Autowired
+    private RolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
+
+    /** 通过用户名查询用户 */
+    @Override
+    public UserEntity findByUsername(String username) {
+
+        LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserEntity::getUsername, username)
+                .eq(UserEntity::getDeleted, 0);
+
+        return userMapper.selectOne(wrapper);
+    }
+
+    /** 根据 ID 查询用户 */
+    @Override
+    public UserEntity findById(Long id) {
+        return userMapper.selectById(id);
+    }
+
+    /** 查询用户角色 */
+    @Override
+    public List<RoleEntity> getUserRoles(Long userId) {
+
+        // 查询 user_role 关系
+        LambdaQueryWrapper<UserRoleEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserRoleEntity::getUserId, userId);
+
+        List<UserRoleEntity> userRoles = userRoleMapper.selectList(wrapper);
+
+        if (userRoles.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 提取 roleId
+        List<Integer> roleIds = userRoles.stream()
+                .map(UserRoleEntity::getRoleId)
+                .collect(Collectors.toList());
+
+        // 批量查询 role
+        LambdaQueryWrapper<RoleEntity> roleWrapper = new LambdaQueryWrapper<>();
+        roleWrapper.in(RoleEntity::getId, roleIds);
+
+        return roleMapper.selectList(roleWrapper);
+    }
+
+    /** 查询用户权限 */
+    @Override
+    public List<PermissionEntity> getUserPermissions(Long userId) {
+
+        // 获取用户角色
+        List<RoleEntity> roles = getUserRoles(userId);
+
+        if (roles.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 提取 roleId
+        List<Integer> roleIds = roles.stream()
+                .map(RoleEntity::getId)
+                .collect(Collectors.toList());
+
+        // 查询 role_permission
+        LambdaQueryWrapper<RolePermissionEntity> rolePermissionWrapper =
+                new LambdaQueryWrapper<>();
+
+        rolePermissionWrapper.in(RolePermissionEntity::getRoleId, roleIds);
+
+        List<RolePermissionEntity> rolePermissions =
+                rolePermissionMapper.selectList(rolePermissionWrapper);
+
+        if (rolePermissions.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 提取 permissionId
+        List<Integer> permissionIds = rolePermissions.stream()
+                .map(RolePermissionEntity::getPermissionId)
+                .collect(Collectors.toList());
+
+        // 查询 permission
+        LambdaQueryWrapper<PermissionEntity> permissionWrapper =
+                new LambdaQueryWrapper<>();
+
+        permissionWrapper.in(PermissionEntity::getId, permissionIds);
+
+        return permissionMapper.selectList(permissionWrapper);
+    }
+
+    /** 获取用户权限字符串 */
+    @Override
+    public List<String> getUserPermissionString(Long userId) {
+
+        List<PermissionEntity> permissions = getUserPermissions(userId);
+
+        return permissions.stream()
+                .map(PermissionEntity::getPermissionCode)
+                .collect(Collectors.toList());
+    }
+}
