@@ -21,6 +21,14 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private PermissionMapper permissionMapper;
 
+    /** 查询单个 ID 对应的角色 */
+    @Override
+    public RoleEntity findById(Integer roleId) {
+        LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleEntity::getId, roleId);
+
+        return roleMapper.selectOne(wrapper);
+    }
 
     /** 查询多个 ID 对应的角色 */
     @Override
