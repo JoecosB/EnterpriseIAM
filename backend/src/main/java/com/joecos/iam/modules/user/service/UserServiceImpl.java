@@ -3,13 +3,14 @@ package com.joecos.iam.modules.user.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
@@ -17,17 +18,7 @@ public class UserServiceImpl implements UserService {
     private final RoleMapper roleMapper;
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
-    public UserServiceImpl(UserMapper userMapper,
-                           UserRoleMapper userRoleMapper,
-                           RoleMapper roleMapper,
-                           RolePermissionMapper rolePermissionMapper,
-                           PermissionMapper permissionMapper) {
-        this.userMapper = userMapper;
-        this.userRoleMapper = userRoleMapper;
-        this.roleMapper = roleMapper;
-        this.rolePermissionMapper = rolePermissionMapper;
-        this.permissionMapper = permissionMapper;
-    }
+
 
     /** 通过用户名查询用户 */
     @Override

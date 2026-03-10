@@ -3,19 +3,17 @@ package com.joecos.iam.modules.permission.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.joecos.iam.infrastructure.persistence.mapper.PermissionMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class PermissionServiceImpl implements PermissionService {
-
     private final PermissionMapper permissionMapper;
-    public PermissionServiceImpl(PermissionMapper permissionMapper) {
-        this.permissionMapper = permissionMapper;
-    }
+
 
     /** 根据 ID 查询权限 */
     @Override

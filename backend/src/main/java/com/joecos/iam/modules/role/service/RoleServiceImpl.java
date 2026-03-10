@@ -3,24 +3,19 @@ package com.joecos.iam.modules.role.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class RoleServiceImpl implements RoleService {
-
     private final RoleMapper roleMapper;
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
-    public RoleServiceImpl(RoleMapper roleMapper,
-                           RolePermissionMapper rolePermissionMapper,
-                           PermissionMapper permissionMapper) {
-        this.roleMapper = roleMapper;
-        this.rolePermissionMapper = rolePermissionMapper;
-        this.permissionMapper = permissionMapper;
-    }
+
 
     /** 查询单个 ID 对应的角色 */
     @Override

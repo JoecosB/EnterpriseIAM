@@ -3,17 +3,17 @@ package com.joecos.iam.modules.auth.service;
 import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 import com.joecos.iam.modules.auth.model.AuthResult;
 import com.joecos.iam.modules.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
+@RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
-    public AuthServiceImpl(UserService userService) {
-        this.userService = userService;
-    }
+
 
     /** 通过用户名登陆 */
     @Override
