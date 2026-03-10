@@ -29,7 +29,7 @@ public class PermissionController {
     }
 
     /** 获取全部权限 */
-    @GetMapping("/permissions")
+    @GetMapping
     public List<PermissionEntity> getAllPermissions() {
         return permissionService.getAllPermissions();
     }
