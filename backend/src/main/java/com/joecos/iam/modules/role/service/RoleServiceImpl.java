@@ -3,7 +3,6 @@ package com.joecos.iam.modules.role.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,14 +11,16 @@ import java.util.List;
 @Service
 public class RoleServiceImpl implements RoleService {
 
-    @Autowired
-    private RoleMapper roleMapper;
-
-    @Autowired
-    private RolePermissionMapper rolePermissionMapper;
-
-    @Autowired
-    private PermissionMapper permissionMapper;
+    private final RoleMapper roleMapper;
+    private final RolePermissionMapper rolePermissionMapper;
+    private final PermissionMapper permissionMapper;
+    public RoleServiceImpl(RoleMapper roleMapper,
+                           RolePermissionMapper rolePermissionMapper,
+                           PermissionMapper permissionMapper) {
+        this.roleMapper = roleMapper;
+        this.rolePermissionMapper = rolePermissionMapper;
+        this.permissionMapper = permissionMapper;
+    }
 
     /** 查询单个 ID 对应的角色 */
     @Override

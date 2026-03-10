@@ -12,9 +12,10 @@ import java.util.List;
 @Service
 public class PermissionServiceImpl implements PermissionService {
 
-    @Autowired
-    private PermissionMapper permissionMapper;
-
+    private final PermissionMapper permissionMapper;
+    public PermissionServiceImpl(PermissionMapper permissionMapper) {
+        this.permissionMapper = permissionMapper;
+    }
 
     /** 根据 ID 查询权限 */
     @Override

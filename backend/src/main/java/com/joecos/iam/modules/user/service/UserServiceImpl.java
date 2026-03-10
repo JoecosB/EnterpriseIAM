@@ -12,21 +12,22 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private UserRoleMapper userRoleMapper;
-
-    @Autowired
-    private RoleMapper roleMapper;
-
-    @Autowired
-    private RolePermissionMapper rolePermissionMapper;
-
-    @Autowired
-    private PermissionMapper permissionMapper;
+    private final UserMapper userMapper;
+    private final UserRoleMapper userRoleMapper;
+    private final RoleMapper roleMapper;
+    private final RolePermissionMapper rolePermissionMapper;
+    private final PermissionMapper permissionMapper;
+    public UserServiceImpl(UserMapper userMapper,
+                           UserRoleMapper userRoleMapper,
+                           RoleMapper roleMapper,
+                           RolePermissionMapper rolePermissionMapper,
+                           PermissionMapper permissionMapper) {
+        this.userMapper = userMapper;
+        this.userRoleMapper = userRoleMapper;
+        this.roleMapper = roleMapper;
+        this.rolePermissionMapper = rolePermissionMapper;
+        this.permissionMapper = permissionMapper;
+    }
 
     /** 通过用户名查询用户 */
     @Override
