@@ -45,8 +45,18 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionMapper.selectList(null);
     }
 
+    /** 根据单个权限 ID 查询权限代码 */
+    @Override
+    public String getPermissionCode(Integer permissionId) {
+        LambdaQueryWrapper<PermissionEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PermissionEntity::getId, permissionId);
+        PermissionEntity permission = permissionMapper.selectById(wrapper);
 
-    /** 根据权限 ID 查询权限代码 */
+        return permission.getPermissionCode();
+    }
+
+
+    /** 根据多个权限 ID 查询权限代码 */
     @Override
     public List<String> getPermissionCodes(List<Integer> permissionIds) {
 
