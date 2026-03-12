@@ -14,7 +14,6 @@ import java.util.Objects;
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
 
-
     /** 通过用户名登陆 */
     @Override
     public Boolean loginByUsername(String username, String password) {
@@ -28,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
 
     /** 加载用户信息 */
     @Override
-    public AuthResult loadUser(Long userId) {
+    public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
         UserEntity user = userService.findById(userId);
         List<String> permissionCodes = userService.getUserPermissionString(userId);
@@ -38,5 +37,11 @@ public class AuthServiceImpl implements AuthService {
         result.setPermissions(permissionCodes);
 
         return result;
+    }
+
+    @Override
+    public Long getUserIdByUsername(String username) {
+        UserEntity user = userService.findByUsername(username);
+        return user.getId();
     }
 }

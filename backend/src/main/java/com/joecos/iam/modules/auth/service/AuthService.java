@@ -4,5 +4,6 @@ import com.joecos.iam.modules.auth.model.AuthResult;
 
 public interface AuthService {
     Boolean loginByUsername(String username, String password);
-    AuthResult loadUser(Long userId);
+    AuthResult loadUserById(Long userId);
+    Long getUserIdByUsername(String username);
 }
