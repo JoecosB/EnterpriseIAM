@@ -18,8 +18,12 @@ public class JwtServiceImpl implements JwtService {
     @Value("${security.jwt.secretKey}")
     Key secretKey;
 
+
     /**
      * 生成用户授权 Token
+     *
+     * @param userId    用户 ID
+     * @param username  用户名
      */
     @Override
     public String generateToken(Long userId, String username) {
@@ -37,20 +41,20 @@ public class JwtServiceImpl implements JwtService {
                 .compact();
     }
 
+
     /**
-     * 解析用户 Token，提取 userId
+     * 从 Token 中解析 claim
+     *
+     * @param token 用户授权 token
      */
     @Override
-    public Long extractUserId(String token) {
-
+    public Claims extractClaim(String token) {
         try {
-            Claims claims = Jwts.parser()
+            return Jwts.parser()
                     .verifyWith((SecretKey) secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
-
-            return claims.get("userId", Long.class);
 
         } catch (JwtException ex) {
             throw new RuntimeException("Invalid JWT token", ex);
@@ -58,28 +62,34 @@ public class JwtServiceImpl implements JwtService {
         }
     }
 
+
     /**
-     * 解析用户 Token，提取 username
+     * 从 claim 中解析 userId
+     *
+     * @param claim 从用户 token 中解析的 claim
      */
     @Override
-    public String extractUsername(String token) {
-
-        try {
-            Claims claims = Jwts.parser()
-                    .verifyWith((SecretKey) secretKey)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-
-            return claims.get("username", String.class);
-
-        } catch (JwtException ex) {
-            throw new RuntimeException("Invalid JWT token", ex);
-
-        }
+    public Long extractUserId(Claims claim) {
+        return claim.get("userId", Long.class);
     }
 
-    /** 验证 Token 是否合法 */
+
+    /**
+     * 从 claim 中解析 username
+     *
+     * @param claim 从用户 token 中解析的 claim
+     */
+    @Override
+    public String extractUsername(Claims claim) {
+        return claim.get("username", String.class);
+    }
+
+
+    /**
+     * 验证 Token 是否合法
+     *
+     * @param token 用户授权 token
+     */
     @Override
     public boolean isTokenValid(String token) {
 
