@@ -1,12 +1,13 @@
 package com.joecos.iam.modules.permission.model;
 
 import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-
+@Component
 public class PermissionTreeBuilder {
     /**
      * 根据权限实体列表，建立权限树。
