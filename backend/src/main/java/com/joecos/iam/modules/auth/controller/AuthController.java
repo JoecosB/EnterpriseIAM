@@ -1,30 +1,35 @@
 package com.joecos.iam.modules.auth.controller;
 
-import com.joecos.iam.modules.auth.model.AuthResult;
-import com.joecos.iam.modules.auth.model.LoginRequest;
+import com.joecos.iam.modules.auth.model.*;
 import com.joecos.iam.modules.auth.service.AuthService;
+import com.joecos.iam.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+    private final JwtService jwtService;
 
     @PostMapping("/login")
-    public AuthResult login(@RequestBody LoginRequest loginRequest) {
-        boolean loginSuccess = authService.loginByUsername(
-                loginRequest.getUsername(),
-                loginRequest.getPassword()
-        );
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
 
+        boolean loginSuccess = authService.loginByUsername(username, password);
         if (!loginSuccess) {
             throw new RuntimeException("Invalid username or password");
         }
 
-        return authService.loadUserById(
-                authService.getUserIdByUsername(loginRequest.getUsername())
-        );
+        AuthResult user = authService.loadUserByUsername(username);
+        String token = jwtService.generateToken(user.getUserId(), user.getUsername());
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken(token);
+        loginResponse.setUser(user);
+
+        return loginResponse;
     }
 }
