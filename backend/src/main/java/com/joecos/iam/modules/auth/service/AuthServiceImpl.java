@@ -1,7 +1,10 @@
 package com.joecos.iam.modules.auth.service;
 
+import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 import com.joecos.iam.modules.auth.model.AuthResult;
+import com.joecos.iam.modules.permission.model.PermissionTree;
+import com.joecos.iam.modules.permission.model.PermissionTreeBuilder;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +16,7 @@ import java.util.Objects;
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
+    private final PermissionTreeBuilder builder;
 
     /** 通过用户名登陆 */
     @Override
@@ -30,11 +34,12 @@ public class AuthServiceImpl implements AuthService {
     public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
         UserEntity user = userService.findById(userId);
-        List<String> permissionCodes = userService.getUserPermissionString(userId);
+        List<PermissionEntity> permissions = userService.getUserPermissions(userId);
+        List<PermissionTree> permissionTree = builder.buildPermissionTree(permissions);
 
         result.setUserId(userId);
         result.setUsername(user.getUsername());
-        result.setPermissions(permissionCodes);
+        result.setPermissionTree(permissionTree);
 
         return result;
     }
