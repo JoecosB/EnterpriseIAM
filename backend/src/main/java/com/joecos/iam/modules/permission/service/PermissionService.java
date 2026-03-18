@@ -11,5 +11,5 @@ public interface PermissionService {
     List<PermissionEntity> getAllPermissions();
     String getPermissionCode(Integer permissionId);
     List<String> getPermissionCodes(List<Integer> permissionIds);
-    List<PermissionTree> getPermissionTree();
+    List<PermissionTree> getFullPermissionTree();
 }

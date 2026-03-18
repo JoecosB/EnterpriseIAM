@@ -83,7 +83,7 @@ public class PermissionServiceImpl implements PermissionService {
 
     /** 返回当前系统权限树 */
     @Override
-    public List<PermissionTree> getPermissionTree() {
+    public List<PermissionTree> getFullPermissionTree() {
         List<PermissionEntity> permissions = getAllPermissions();
 
         return builder.buildPermissionTree(permissions);

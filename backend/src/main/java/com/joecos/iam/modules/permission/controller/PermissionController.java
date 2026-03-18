@@ -1,6 +1,7 @@
 package com.joecos.iam.modules.permission.controller;
 
 import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
+import com.joecos.iam.modules.permission.model.PermissionTree;
 import com.joecos.iam.modules.permission.service.PermissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,5 +33,11 @@ public class PermissionController {
     @GetMapping
     public List<PermissionEntity> getAllPermissions() {
         return permissionService.getAllPermissions();
+    }
+
+    /** 获取完整权限树 */
+    @GetMapping("/tree")
+    public List<PermissionTree> getFullPermissionTree() {
+        return permissionService.getFullPermissionTree();
     }
 }
