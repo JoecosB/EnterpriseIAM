@@ -1,7 +1,8 @@
 package com.joecos.iam.modules.auth.model;
 
-import java.util.List;
 import lombok.Data;
+
+import java.util.List;
 
 @ Data
 public class AuthResult {
