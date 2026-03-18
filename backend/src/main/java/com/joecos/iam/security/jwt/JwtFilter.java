@@ -34,6 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
         // 读取 Authorization Header
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -41,11 +42,11 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authHeader.substring(7);
         if (!jwtService.isTokenValid(token)) {
             filterChain.doFilter(request, response);
+            return;
         }
 
         // 加载用户
-        Claims claims = jwtService.extractClaim(token);
-        Long userId = jwtService.extractUserId(claims);
+        Long userId = jwtService.extractUserId(token);
         UserEntity user = userService.findById(userId);
 
         // 构造 Authentication
