@@ -2,7 +2,6 @@ package com.joecos.iam.security.jwt;
 
 import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 import com.joecos.iam.modules.user.service.UserService;
-import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
