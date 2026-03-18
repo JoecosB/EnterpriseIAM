@@ -3,11 +3,12 @@ package com.joecos.iam.security.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Service
@@ -16,8 +17,16 @@ public class JwtServiceImpl implements JwtService {
     Integer expiration;
 
     @Value("${security.jwt.secretKey}")
-    Key secretKey;
+    String rawKey;
 
+    private SecretKey getSignKey() {
+        if (rawKey != null) {
+            return Keys.hmacShaKeyFor(rawKey.getBytes(StandardCharsets.UTF_8));
+        }
+        return null;
+    }
+
+    private final SecretKey secretKey = getSignKey();
 
     /**
      * 生成用户授权 Token
@@ -51,7 +60,7 @@ public class JwtServiceImpl implements JwtService {
     public Claims extractClaim(String token) {
         try {
             return Jwts.parser()
-                    .verifyWith((SecretKey) secretKey)
+                    .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
@@ -97,7 +106,7 @@ public class JwtServiceImpl implements JwtService {
 
         try {
             Jwts.parser()
-                    .verifyWith((SecretKey) secretKey)
+                    .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token);
 
