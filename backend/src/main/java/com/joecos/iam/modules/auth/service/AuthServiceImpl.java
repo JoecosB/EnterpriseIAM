@@ -25,7 +25,7 @@ public class AuthServiceImpl implements AuthService {
         return Objects.equals(password, user.getPassword());
     }
 
-    /** 加载用户信息 */
+    /** 通过 ID 加载用户信息 */
     @Override
     public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
@@ -37,6 +37,13 @@ public class AuthServiceImpl implements AuthService {
         result.setPermissions(permissionCodes);
 
         return result;
+    }
+
+    /** 通过用户名加载用户信息 */
+    @Override
+    public AuthResult loadUserByUsername(String Username) {
+        Long userId = getUserIdByUsername(Username);
+        return loadUserById(userId);
     }
 
     @Override
