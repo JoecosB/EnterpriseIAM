@@ -64,23 +64,25 @@ public class JwtServiceImpl implements JwtService {
 
 
     /**
-     * 从 claim 中解析 userId
+     * 从 token 中解析 userId
      *
-     * @param claim 从用户 token 中解析的 claim
+     * @param token 用户 token
      */
     @Override
-    public Long extractUserId(Claims claim) {
+    public Long extractUserId(String token) {
+        Claims claim = extractClaim(token);
         return claim.get("userId", Long.class);
     }
 
 
     /**
-     * 从 claim 中解析 username
+     * 从 token 中解析 username
      *
-     * @param claim 从用户 token 中解析的 claim
+     * @param token 从用户 token 中解析的 claim
      */
     @Override
-    public String extractUsername(Claims claim) {
+    public String extractUsername(String token) {
+        Claims claim = extractClaim(token);
         return claim.get("username", String.class);
     }
 

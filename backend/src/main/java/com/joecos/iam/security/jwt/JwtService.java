@@ -11,10 +11,10 @@ public interface JwtService {
     Claims extractClaim(String token);
 
     /** 从 claim 中解析 userId */
-    Long extractUserId(Claims claim);
+    Long extractUserId(String token);
 
     /** 从 claim 中解析 username */
-    String extractUsername(Claims claim);
+    String extractUsername(String token);
 
     /** 校验 Token 是否有效 */
     boolean isTokenValid(String token);
