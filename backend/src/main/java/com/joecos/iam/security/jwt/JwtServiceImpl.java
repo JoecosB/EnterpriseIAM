@@ -26,8 +26,6 @@ public class JwtServiceImpl implements JwtService {
         return null;
     }
 
-    private final SecretKey secretKey = getSignKey();
-
     /**
      * 生成用户授权 Token
      *
@@ -46,7 +44,7 @@ public class JwtServiceImpl implements JwtService {
                 .subject(username)
                 .issuedAt(now)
                 .expiration(expiryDate)
-                .signWith(secretKey)
+                .signWith(getSignKey())
                 .compact();
     }
 
@@ -60,7 +58,7 @@ public class JwtServiceImpl implements JwtService {
     public Claims extractClaim(String token) {
         try {
             return Jwts.parser()
-                    .verifyWith(secretKey)
+                    .verifyWith(getSignKey())
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
@@ -106,7 +104,7 @@ public class JwtServiceImpl implements JwtService {
 
         try {
             Jwts.parser()
-                    .verifyWith(secretKey)
+                    .verifyWith(getSignKey())
                     .build()
                     .parseSignedClaims(token);
 
