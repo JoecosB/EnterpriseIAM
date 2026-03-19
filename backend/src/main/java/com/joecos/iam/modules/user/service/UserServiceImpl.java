@@ -116,4 +116,16 @@ public class UserServiceImpl implements UserService {
                 .map(PermissionEntity::getPermissionCode)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Long getUserIdByUsername(String username) {
+        UserEntity user = findByUsername(username);
+        return user.getId();
+    }
+
+    @Override
+    public String getUsernameByUserId(Long userId) {
+        UserEntity user = findById(userId);
+        return user.getUsername();
+    }
 }

@@ -47,13 +47,7 @@ public class AuthServiceImpl implements AuthService {
     /** 通过用户名加载用户信息 */
     @Override
     public AuthResult loadUserByUsername(String Username) {
-        Long userId = getUserIdByUsername(Username);
+        Long userId = userService.getUserIdByUsername(Username);
         return loadUserById(userId);
-    }
-
-    @Override
-    public Long getUserIdByUsername(String username) {
-        UserEntity user = userService.findByUsername(username);
-        return user.getId();
     }
 }
