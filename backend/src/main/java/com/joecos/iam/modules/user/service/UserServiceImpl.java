@@ -1,10 +1,10 @@
 package com.joecos.iam.modules.user.service;
 
-import com.joecos.iam.common.exception.BusinessException;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.joecos.iam.modules.user.model.CreateUserRequest;
+import com.joecos.iam.modules.user.model.UserDTO;
+import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -163,6 +163,16 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 检查用户名是否被占用
+     *
+     * @param username 用户名
+     * */
+    @Override
+    public boolean checkUsernameExistence(String username) {
+        return findByUsername(username) == null;
+    }
+
+    /**
      * 创建用户
      *
      * @param request CreateUserRequest DTO
@@ -172,7 +182,7 @@ public class UserServiceImpl implements UserService {
         String username = request.getUsername();
         String password = request.getPassword();
 
-        if(!checkUsernameAvailable(username)) {
+        if(!checkUsernameExistence(username)) {
             throw new RuntimeException("Username occupied!");
         }
 
@@ -185,12 +195,28 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 检查用户名是否被占用
+     * 查询用户列表
      *
-     * @param username 用户名
-     * */
+     */
     @Override
-    public boolean checkUsernameAvailable(String username) {
-        return findByUsername(username) == null;
+    public List<UserDTO> getUserList() {
+        List<UserEntity> userEntities = userMapper.selectList(null);
+
+        List<UserDTO> userList = new ArrayList<>();
+        for(UserEntity userEntity : userEntities) {
+            UserDTO user = new UserDTO();
+            List<RoleEntity> roles = getUserRoles(userEntity.getId());
+            List<String> userRoles = roles.stream()
+                            .map(RoleEntity::getRoleName)
+                            .toList();
+
+            user.setUserId(userEntity.getId());
+            user.setUsername(userEntity.getUsername());
+            user.setUserRole(userRoles);
+
+            userList.add(user);
+        }
+
+        return userList;
     }
 }

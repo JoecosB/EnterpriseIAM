@@ -1,6 +1,7 @@
 package com.joecos.iam.modules.user.controller;
 
-import com.joecos.iam.modules.user.model.CreateUserRequest;
+import com.joecos.iam.modules.user.model.UserDTO;
+import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,9 +35,11 @@ public class UserController {
         return userService.createUser(request);
     }
 
+    /** 查询用户列表 */
+    @PreAuthorize("hasAuthority('user:list')")
+    @GetMapping
+    public List<UserDTO> getUserList() {
+        return userService.getUserList();
+    }
 
-    /** 删除用户 */
-
-
-    /** 修改用户信息 */
 }

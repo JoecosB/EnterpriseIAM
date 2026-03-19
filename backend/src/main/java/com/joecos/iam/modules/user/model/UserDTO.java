@@ -2,8 +2,11 @@ package com.joecos.iam.modules.user.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class CreateUserRequest {
+public class UserDTO {
+    Long userId;
     String username;
-    String password;
+    List<String> userRole;
 }

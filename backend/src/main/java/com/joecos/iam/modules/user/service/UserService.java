@@ -1,7 +1,8 @@
 package com.joecos.iam.modules.user.service;
 
 import com.joecos.iam.infrastructure.persistence.entity.*;
-import com.joecos.iam.modules.user.model.CreateUserRequest;
+import com.joecos.iam.modules.user.model.UserDTO;
+import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 
 import java.util.List;
 
@@ -63,9 +64,14 @@ public interface UserService {
     Long createUser(CreateUserRequest request);
 
     /**
+     * 查询用户列表
+     * */
+    List<UserDTO> getUserList();
+
+    /**
      * 检查用户名是否被占用
      *
      * @param username 用户名
      * */
-    boolean checkUsernameAvailable(String username);
+    boolean checkUsernameExistence(String username);
 }
