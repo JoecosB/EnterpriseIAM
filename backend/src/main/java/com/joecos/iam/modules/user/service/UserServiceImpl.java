@@ -1,9 +1,12 @@
 package com.joecos.iam.modules.user.service;
 
+import com.joecos.iam.common.exception.BusinessException;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.joecos.iam.modules.user.model.CreateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,9 +21,13 @@ public class UserServiceImpl implements UserService {
     private final RoleMapper roleMapper;
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-
-    /** 通过用户名查询用户 */
+    /**
+     * 通过用户名查询用户
+     *
+     * @param username 用户名
+     * */
     @Override
     public UserEntity findByUsername(String username) {
 
@@ -31,13 +38,21 @@ public class UserServiceImpl implements UserService {
         return userMapper.selectOne(wrapper);
     }
 
-    /** 根据 ID 查询用户 */
+    /**
+     * 根据 ID 查询用户
+     *
+     * @param userId 用户 ID
+     * */
     @Override
-    public UserEntity findById(Long id) {
-        return userMapper.selectById(id);
+    public UserEntity findById(Long userId) {
+        return userMapper.selectById(userId);
     }
 
-    /** 查询用户角色 */
+    /**
+     * 查询用户角色
+     *
+     * @param userId 用户 ID
+     * */
     @Override
     public List<RoleEntity> getUserRoles(Long userId) {
 
@@ -63,7 +78,11 @@ public class UserServiceImpl implements UserService {
         return roleMapper.selectList(roleWrapper);
     }
 
-    /** 查询用户权限 */
+    /**
+     * 查询用户权限
+     *
+     * @param userId 用户 ID
+     * */
     @Override
     public List<PermissionEntity> getUserPermissions(Long userId) {
 
@@ -106,7 +125,11 @@ public class UserServiceImpl implements UserService {
         return permissionMapper.selectList(permissionWrapper);
     }
 
-    /** 获取用户权限字符串 */
+    /**
+     * 获取用户权限字符串
+     *
+     * @param userId 用户 ID
+     * */
     @Override
     public List<String> getUserPermissionString(Long userId) {
 
@@ -117,15 +140,57 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * 通过用户名查询用户 ID
+     *
+     * @param username 用户名
+     * */
     @Override
     public Long getUserIdByUsername(String username) {
         UserEntity user = findByUsername(username);
         return user.getId();
     }
 
+    /**
+     * 通过用户 ID 查询用户名
+     *
+     * @param userId 用户 ID
+     * */
     @Override
     public String getUsernameByUserId(Long userId) {
         UserEntity user = findById(userId);
         return user.getUsername();
+    }
+
+    /**
+     * 创建用户
+     *
+     * @param request CreateUserRequest DTO
+     * */
+    @Override
+    public Long createUser(CreateUserRequest request) {
+        String username = request.getUsername();
+        String password = request.getPassword();
+
+        if(!checkUsernameAvailable(username)) {
+            throw new RuntimeException("Username occupied!");
+        }
+
+        UserEntity newUser = new UserEntity();
+        newUser.setUsername(username);
+        newUser.setPassword(passwordEncoder.encode(password));
+        userMapper.insert(newUser);
+
+        return newUser.getId();
+    }
+
+    /**
+     * 检查用户名是否被占用
+     *
+     * @param username 用户名
+     * */
+    @Override
+    public boolean checkUsernameAvailable(String username) {
+        return findByUsername(username) == null;
     }
 }

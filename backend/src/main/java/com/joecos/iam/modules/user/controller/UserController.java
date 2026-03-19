@@ -1,11 +1,10 @@
 package com.joecos.iam.modules.user.controller;
 
+import com.joecos.iam.modules.user.model.CreateUserRequest;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 
 import java.util.List;
@@ -27,4 +26,17 @@ public class UserController {
     public List<String> getUserPermissions(@PathVariable Long id) {
         return userService.getUserPermissionString(id);
     }
+
+    /** 创建用户 */
+    @PreAuthorize("hasAuthority('user:create')")
+    @PostMapping
+    public Long createUser(@RequestBody CreateUserRequest request) {
+        return userService.createUser(request);
+    }
+
+
+    /** 删除用户 */
+
+
+    /** 修改用户信息 */
 }
