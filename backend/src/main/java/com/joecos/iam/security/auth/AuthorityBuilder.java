@@ -14,6 +14,10 @@ public class AuthorityBuilder {
      * @param permissionCodes 权限代码字符串列表
      * */
     public static List<GrantedAuthority> build(List<String> permissionCodes) {
+        if (permissionCodes == null || permissionCodes.isEmpty()) {
+            return List.of();
+        }
+
         return permissionCodes.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
