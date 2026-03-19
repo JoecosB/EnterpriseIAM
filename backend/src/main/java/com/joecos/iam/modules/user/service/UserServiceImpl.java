@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
      * @param username 用户名
      * */
     @Override
-    public UserEntity findByUsername(String username) {
+    public UserEntity findUserByUsername(String username) {
 
         LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserEntity::getUsername, username)
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public UserEntity findById(Long userId) {
+    public UserEntity findUserById(Long userId) {
         return userMapper.selectById(userId);
     }
 
@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public List<RoleEntity> getUserRoles(Long userId) {
+    public List<RoleEntity> findUserRoles(Long userId) {
 
         // 查询 user_role 关系
         LambdaQueryWrapper<UserRoleEntity> wrapper = new LambdaQueryWrapper<>();
@@ -79,15 +79,30 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 查询用户角色字符串
+     *
+     * @param userId 用户 ID
+     *
+     */
+    @Override
+    public List<String> findUserRoleString(Long userId) {
+        List<RoleEntity> roleEntities = findUserRoles(userId);
+
+        return roleEntities.stream()
+                .map(RoleEntity::getRoleName)
+                .toList();
+    }
+
+    /**
      * 查询用户权限
      *
      * @param userId 用户 ID
      * */
     @Override
-    public List<PermissionEntity> getUserPermissions(Long userId) {
+    public List<PermissionEntity> findUserPermissions(Long userId) {
 
         // 获取用户角色
-        List<RoleEntity> roles = getUserRoles(userId);
+        List<RoleEntity> roles = findUserRoles(userId);
 
         if (roles.isEmpty()) {
             return new ArrayList<>();
@@ -131,9 +146,9 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public List<String> getUserPermissionString(Long userId) {
+    public List<String> findUserPermissionString(Long userId) {
 
-        List<PermissionEntity> permissions = getUserPermissions(userId);
+        List<PermissionEntity> permissions = findUserPermissions(userId);
 
         return permissions.stream()
                 .map(PermissionEntity::getPermissionCode)
@@ -146,8 +161,8 @@ public class UserServiceImpl implements UserService {
      * @param username 用户名
      * */
     @Override
-    public Long getUserIdByUsername(String username) {
-        UserEntity user = findByUsername(username);
+    public Long findUserIdByUsername(String username) {
+        UserEntity user = findUserByUsername(username);
         return user.getId();
     }
 
@@ -157,8 +172,8 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public String getUsernameByUserId(Long userId) {
-        UserEntity user = findById(userId);
+    public String findUsernameByUserId(Long userId) {
+        UserEntity user = findUserById(userId);
         return user.getUsername();
     }
 
@@ -169,11 +184,11 @@ public class UserServiceImpl implements UserService {
      * */
     @Override
     public boolean checkUsernameExistence(String username) {
-        return findByUsername(username) == null;
+        return findUserByUsername(username) == null;
     }
 
     /**
-     * 创建用户
+     * API-创建用户
      *
      * @param request CreateUserRequest DTO
      * */
@@ -195,7 +210,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 查询用户列表
+     * API-查询用户列表
      *
      */
     @Override
@@ -205,18 +220,32 @@ public class UserServiceImpl implements UserService {
         List<UserDTO> userList = new ArrayList<>();
         for(UserEntity userEntity : userEntities) {
             UserDTO user = new UserDTO();
-            List<RoleEntity> roles = getUserRoles(userEntity.getId());
-            List<String> userRoles = roles.stream()
-                            .map(RoleEntity::getRoleName)
-                            .toList();
-
             user.setUserId(userEntity.getId());
             user.setUsername(userEntity.getUsername());
-            user.setUserRole(userRoles);
+            user.setUserRole(findUserRoleString(userEntity.getId()));
 
             userList.add(user);
         }
 
         return userList;
     }
+
+    /**
+     * API-通过 ID 查询单个用户
+     *
+     * @param userId 用户 ID
+     *
+     */
+    @Override
+    public UserDTO getUserById(Long userId) {
+        UserEntity userEntity = findUserById(userId);
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userEntity.getId());
+        userDTO.setUsername(userEntity.getUsername());
+        userDTO.setUserRole(findUserRoleString(userId));
+
+        return userDTO;
+    }
+
+
 }

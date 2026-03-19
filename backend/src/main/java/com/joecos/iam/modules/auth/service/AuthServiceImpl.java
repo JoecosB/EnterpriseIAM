@@ -21,7 +21,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Boolean loginByUsername(String username, String password) {
         // 通过用户名获取用户
-        UserEntity user = userService.findByUsername(username);
+        UserEntity user = userService.findUserByUsername(username);
         if(user == null) {return false;}
 
         // 校验密码
@@ -32,8 +32,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
-        UserEntity user = userService.findById(userId);
-        List<PermissionEntity> permissions = userService.getUserPermissions(userId);
+        UserEntity user = userService.findUserById(userId);
+        List<PermissionEntity> permissions = userService.findUserPermissions(userId);
         List<PermissionTree> permissionTree = PermissionTreeBuilder.build(permissions);
 
         result.setUserId(userId);
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     /** 通过用户名加载用户信息 */
     @Override
     public AuthResult loadUserByUsername(String Username) {
-        Long userId = userService.getUserIdByUsername(Username);
+        Long userId = userService.findUserIdByUsername(Username);
         return loadUserById(userId);
     }
 }

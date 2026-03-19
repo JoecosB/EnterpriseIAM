@@ -16,16 +16,10 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    /** 获取用户信息 */
-    @GetMapping("/{id}")
-    public UserEntity getUserById(@PathVariable Long id) {
-        return userService.findById(id);
-    }
-
     /** 获取用户权限 */
     @GetMapping("/{id}/permissions")
     public List<String> getUserPermissions(@PathVariable Long id) {
-        return userService.getUserPermissionString(id);
+        return userService.findUserPermissionString(id);
     }
 
     /** 创建用户 */
@@ -40,6 +34,13 @@ public class UserController {
     @GetMapping
     public List<UserDTO> getUserList() {
         return userService.getUserList();
+    }
+
+    /** 获取用户信息 */
+    @PreAuthorize("hasAuthority('user:list')")
+    @GetMapping("/{id}")
+    public UserDTO getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 
 }

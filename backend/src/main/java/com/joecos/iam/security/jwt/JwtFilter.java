@@ -18,7 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.security.core.Authentication;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -50,9 +49,9 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 加载用户
         Long userId = jwtService.extractUserId(token);
-        UserEntity user = userService.findById(userId);
+        UserEntity user = userService.findUserById(userId);
         String username = user.getUsername();
-        List<String> permissionCodes = userService.getUserPermissionString(userId);
+        List<String> permissionCodes = userService.findUserPermissionString(userId);
 
         // 构造 Authentication
         List<GrantedAuthority> authorities = AuthorityBuilder.build(permissionCodes);
