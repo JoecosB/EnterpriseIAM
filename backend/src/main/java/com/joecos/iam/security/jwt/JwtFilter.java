@@ -2,6 +2,7 @@ package com.joecos.iam.security.jwt;
 
 import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 import com.joecos.iam.modules.user.service.UserService;
+import com.joecos.iam.security.model.UserPrincipal;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -46,12 +47,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // 加载用户
         Long userId = jwtService.extractUserId(token);
+        String username = userService.getUsernameByUserId(userId);
         UserEntity user = userService.findById(userId);
 
         // 构造 Authentication
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(
-                        user,
+                        new UserPrincipal(userId, username),
                         null,
                         Collections.emptyList()
                 );
