@@ -9,4 +9,6 @@ public interface UserService {
     List<RoleEntity> getUserRoles(Long userId);
     List<PermissionEntity> getUserPermissions(Long userId);
     List<String> getUserPermissionString(Long userId);
+    Long getUserIdByUsername(String username);
+    String getUsernameByUserId(Long userId);
 }

@@ -1,7 +1,10 @@
 package com.joecos.iam.modules.auth.service;
 
+import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 import com.joecos.iam.modules.auth.model.AuthResult;
+import com.joecos.iam.modules.permission.model.PermissionTree;
+import com.joecos.iam.modules.permission.model.PermissionTreeBuilder;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,11 +33,12 @@ public class AuthServiceImpl implements AuthService {
     public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
         UserEntity user = userService.findById(userId);
-        List<String> permissionCodes = userService.getUserPermissionString(userId);
+        List<PermissionEntity> permissions = userService.getUserPermissions(userId);
+        List<PermissionTree> permissionTree = PermissionTreeBuilder.build(permissions);
 
         result.setUserId(userId);
         result.setUsername(user.getUsername());
-        result.setPermissions(permissionCodes);
+        result.setPermissionTree(permissionTree);
 
         return result;
     }
@@ -42,13 +46,7 @@ public class AuthServiceImpl implements AuthService {
     /** 通过用户名加载用户信息 */
     @Override
     public AuthResult loadUserByUsername(String Username) {
-        Long userId = getUserIdByUsername(Username);
+        Long userId = userService.getUserIdByUsername(Username);
         return loadUserById(userId);
-    }
-
-    @Override
-    public Long getUserIdByUsername(String username) {
-        UserEntity user = userService.findByUsername(username);
-        return user.getId();
     }
 }

@@ -1,4 +1,4 @@
-package com.joecos.iam.modules.auth.model;
+package com.joecos.iam.modules.auth.model.Login;
 
 import lombok.Data;
 

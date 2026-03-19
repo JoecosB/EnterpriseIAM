@@ -1,9 +1,14 @@
 package com.joecos.iam.modules.auth.controller;
 
 import com.joecos.iam.modules.auth.model.*;
+import com.joecos.iam.modules.auth.model.Login.LoginRequest;
+import com.joecos.iam.modules.auth.model.Login.LoginResponse;
 import com.joecos.iam.modules.auth.service.AuthService;
 import com.joecos.iam.security.jwt.JwtService;
+import com.joecos.iam.security.model.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -31,5 +36,22 @@ public class AuthController {
         loginResponse.setUser(user);
 
         return loginResponse;
+    }
+
+    @GetMapping("/me")
+    public AuthResult me() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new RuntimeException("User is not authenticated");
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        if (!(principal instanceof UserPrincipal userPrincipal)) {
+            throw new RuntimeException("Invalid authentication principal");
+        }
+
+        return authService.loadUserById(userPrincipal.getUserId());
     }
 }
