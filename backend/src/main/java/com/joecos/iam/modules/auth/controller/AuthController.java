@@ -1,6 +1,5 @@
 package com.joecos.iam.modules.auth.controller;
 
-import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 import com.joecos.iam.modules.auth.model.*;
 import com.joecos.iam.modules.auth.model.Login.LoginRequest;
 import com.joecos.iam.modules.auth.model.Login.LoginResponse;
