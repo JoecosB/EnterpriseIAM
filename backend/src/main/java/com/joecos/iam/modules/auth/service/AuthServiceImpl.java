@@ -16,7 +16,6 @@ import java.util.Objects;
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserService userService;
-    private final PermissionTreeBuilder builder;
 
     /** 通过用户名登陆 */
     @Override
@@ -35,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
         AuthResult result = new AuthResult();
         UserEntity user = userService.findById(userId);
         List<PermissionEntity> permissions = userService.getUserPermissions(userId);
-        List<PermissionTree> permissionTree = builder.buildPermissionTree(permissions);
+        List<PermissionTree> permissionTree = PermissionTreeBuilder.build(permissions);
 
         result.setUserId(userId);
         result.setUsername(user.getUsername());

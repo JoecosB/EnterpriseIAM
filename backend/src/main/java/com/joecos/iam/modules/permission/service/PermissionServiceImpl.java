@@ -15,8 +15,6 @@ import java.util.List;
 @Service
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionMapper permissionMapper;
-    private final PermissionTreeBuilder builder;
-
 
     /** 根据 ID 查询权限 */
     @Override
@@ -86,6 +84,6 @@ public class PermissionServiceImpl implements PermissionService {
     public List<PermissionTree> getFullPermissionTree() {
         List<PermissionEntity> permissions = getAllPermissions();
 
-        return builder.buildPermissionTree(permissions);
+        return PermissionTreeBuilder.build(permissions);
     }
 }

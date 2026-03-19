@@ -15,7 +15,7 @@ public class PermissionTreeBuilder {
      * @param permissions 权限实体列表
      *
      * */
-    public static List<PermissionTree> buildPermissionTree(List<PermissionEntity> permissions) {
+    public static List<PermissionTree> build(List<PermissionEntity> permissions) {
 
         // 扫描权限实体列表，生成平铺权限列表
         HashMap<Integer, PermissionTree> permissionMap = new HashMap<>();
