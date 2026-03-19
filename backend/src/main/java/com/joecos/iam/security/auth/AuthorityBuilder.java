@@ -13,7 +13,7 @@ public class AuthorityBuilder {
      *
      * @param permissionCodes 权限代码字符串列表
      * */
-    public List<GrantedAuthority> buildGrantedAuthority(List<String> permissionCodes) {
+    public static List<GrantedAuthority> buildGrantedAuthority(List<String> permissionCodes) {
         return permissionCodes.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
