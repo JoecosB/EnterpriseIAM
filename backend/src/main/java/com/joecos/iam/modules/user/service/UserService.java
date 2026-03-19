@@ -3,6 +3,7 @@ package com.joecos.iam.modules.user.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
+import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
 
 import java.util.List;
 
@@ -27,28 +28,28 @@ public interface UserService {
      *
      * @param userId 用户 ID
      * */
-    List<RoleEntity> findUserRoles(Long userId);
+    List<RoleEntity> findRolesById(Long userId);
 
     /**
      * 查询用户角色字符串
      *
      * @param userId 用户 ID
      * */
-    List<String> findUserRoleString(Long userId);
+    List<String> findRoleNamesById(Long userId);
 
     /**
      * 查询用户权限
      *
      * @param userId 用户 ID
      * */
-    List<PermissionEntity> findUserPermissions(Long userId);
+    List<PermissionEntity> findPermissionsById(Long userId);
 
     /**
      * 获取用户权限字符串
      *
      * @param userId 用户 ID
      * */
-    List<String> findUserPermissionString(Long userId);
+    List<String> findPermissionCodesById(Long userId);
 
     /**
      * 通过用户名查询用户 ID
@@ -91,5 +92,13 @@ public interface UserService {
      * @param userId 用户 ID
      * */
     UserDTO getUserById(Long userId);
+
+    /**
+     * API-修改用户信息
+     *
+     * @param userId 用户 ID
+     * @param request 请求体
+     * */
+    void updateUserInfo(Long userId, UpdateUserRequest request);
 
 }

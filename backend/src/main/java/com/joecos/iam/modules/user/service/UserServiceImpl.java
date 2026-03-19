@@ -5,6 +5,7 @@ import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
+import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,7 +55,7 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public List<RoleEntity> findUserRoles(Long userId) {
+    public List<RoleEntity> findRolesById(Long userId) {
 
         // 查询 user_role 关系
         LambdaQueryWrapper<UserRoleEntity> wrapper = new LambdaQueryWrapper<>();
@@ -85,8 +86,8 @@ public class UserServiceImpl implements UserService {
      *
      */
     @Override
-    public List<String> findUserRoleString(Long userId) {
-        List<RoleEntity> roleEntities = findUserRoles(userId);
+    public List<String> findRoleNamesById(Long userId) {
+        List<RoleEntity> roleEntities = findRolesById(userId);
 
         return roleEntities.stream()
                 .map(RoleEntity::getRoleName)
@@ -99,10 +100,10 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public List<PermissionEntity> findUserPermissions(Long userId) {
+    public List<PermissionEntity> findPermissionsById(Long userId) {
 
         // 获取用户角色
-        List<RoleEntity> roles = findUserRoles(userId);
+        List<RoleEntity> roles = findRolesById(userId);
 
         if (roles.isEmpty()) {
             return new ArrayList<>();
@@ -146,9 +147,9 @@ public class UserServiceImpl implements UserService {
      * @param userId 用户 ID
      * */
     @Override
-    public List<String> findUserPermissionString(Long userId) {
+    public List<String> findPermissionCodesById(Long userId) {
 
-        List<PermissionEntity> permissions = findUserPermissions(userId);
+        List<PermissionEntity> permissions = findPermissionsById(userId);
 
         return permissions.stream()
                 .map(PermissionEntity::getPermissionCode)
@@ -222,7 +223,7 @@ public class UserServiceImpl implements UserService {
             UserDTO user = new UserDTO();
             user.setUserId(userEntity.getId());
             user.setUsername(userEntity.getUsername());
-            user.setUserRole(findUserRoleString(userEntity.getId()));
+            user.setUserRole(findRoleNamesById(userEntity.getId()));
 
             userList.add(user);
         }
@@ -242,9 +243,40 @@ public class UserServiceImpl implements UserService {
         UserDTO userDTO = new UserDTO();
         userDTO.setUserId(userEntity.getId());
         userDTO.setUsername(userEntity.getUsername());
-        userDTO.setUserRole(findUserRoleString(userId));
+        userDTO.setUserRole(findRoleNamesById(userId));
 
         return userDTO;
+    }
+
+    /**
+     * API-修改用户信息
+     *
+     * @param userId  用户 ID
+     * @param request 请求体
+     *
+     */
+    @Override
+    public void updateUserInfo(Long userId, UpdateUserRequest request) {
+        UserEntity userEntity = findUserById(userId);
+        String newUsername = request.getUsername();
+        String newEmail = request.getEmail();
+        String newPassword = request.getPassword();
+
+        if (newUsername != null) {
+            if (checkUsernameExistence(newUsername)) {
+                throw new RuntimeException("Username Occupied");
+            } else {
+                userEntity.setUsername(newUsername);
+            }
+        }
+        if (newPassword != null) {
+            userEntity.setPassword(passwordEncoder.encode(newPassword));
+        }
+        if (newEmail != null) {
+            userEntity.setEmail(newEmail);
+        }
+
+        userMapper.updateById(userEntity);
     }
 
 

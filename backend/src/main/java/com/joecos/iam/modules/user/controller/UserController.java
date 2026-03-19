@@ -2,11 +2,11 @@ package com.joecos.iam.modules.user.controller;
 
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
+import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import com.joecos.iam.infrastructure.persistence.entity.UserEntity;
 
 import java.util.List;
 
@@ -19,7 +19,7 @@ public class UserController {
     /** 获取用户权限 */
     @GetMapping("/{id}/permissions")
     public List<String> getUserPermissions(@PathVariable Long id) {
-        return userService.findUserPermissionString(id);
+        return userService.findPermissionCodesById(id);
     }
 
     /** 创建用户 */
@@ -41,6 +41,15 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
+    }
+
+    /** 更新用户信息 */
+    @PreAuthorize("hasAuthority('user:update')")
+    @PutMapping("/{id}")
+    public void updateUserInfo(@PathVariable Long id,
+                               @RequestBody UpdateUserRequest request
+    ) {
+        userService.updateUserInfo(id, request);
     }
 
 }

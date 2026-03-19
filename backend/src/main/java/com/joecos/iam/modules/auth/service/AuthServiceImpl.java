@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
     public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
         UserEntity user = userService.findUserById(userId);
-        List<PermissionEntity> permissions = userService.findUserPermissions(userId);
+        List<PermissionEntity> permissions = userService.findPermissionsById(userId);
         List<PermissionTree> permissionTree = PermissionTreeBuilder.build(permissions);
 
         result.setUserId(userId);

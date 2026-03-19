@@ -51,7 +51,7 @@ public class JwtFilter extends OncePerRequestFilter {
         Long userId = jwtService.extractUserId(token);
         UserEntity user = userService.findUserById(userId);
         String username = user.getUsername();
-        List<String> permissionCodes = userService.findUserPermissionString(userId);
+        List<String> permissionCodes = userService.findPermissionCodesById(userId);
 
         // 构造 Authentication
         List<GrantedAuthority> authorities = AuthorityBuilder.build(permissionCodes);
