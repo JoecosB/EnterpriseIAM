@@ -23,4 +23,10 @@ public class PermissionController {
     public List<PermissionDTO> getAllPermissions() {
         return permissionService.getAllPermissions();
     }
+
+    /** 通过 ID 查询单个权限 */
+    @GetMapping("/{id}")
+    public PermissionDTO getPermissionById(@PathVariable Integer id) {
+        return permissionService.getPermissionById(id);
+    }
 }

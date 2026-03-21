@@ -52,4 +52,12 @@ public interface PermissionService {
      * API-查询完整权限列表
      * */
     List<PermissionDTO> getAllPermissions();
+
+    /**
+     * API-通过 ID 查询单个权限
+     *
+     * @param permissionId 权限 ID
+     * */
+    PermissionDTO getPermissionById(Integer permissionId);
+
 }

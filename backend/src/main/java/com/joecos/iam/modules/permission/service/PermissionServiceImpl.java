@@ -118,4 +118,22 @@ public class PermissionServiceImpl implements PermissionService {
                         new PermissionDTO(permission.getId(), permission.getPermissionName())
                 ).toList();
     }
+
+    /**
+     * API-通过 ID 查询单个权限
+     *
+     * @param permissionId 权限 ID
+     */
+    @Override
+    public PermissionDTO getPermissionById(Integer permissionId) {
+        PermissionEntity permission = findById(permissionId);
+
+        if (permission == null) {
+            throw new RuntimeException("Permission doesn't exist!");
+        }
+
+        return new PermissionDTO(permission.getId(), permission.getPermissionName());
+    }
+
+
 }
