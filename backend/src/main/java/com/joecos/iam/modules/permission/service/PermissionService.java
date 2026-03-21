@@ -42,6 +42,13 @@ public interface PermissionService {
     List<String> findPermissionCodeByIds(List<Integer> permissionIds);
 
     /**
+     * 通过权限代码查询权限 ID
+     *
+     * @param permissionCode 权限代码
+     * */
+    Integer findPermissionIdByCode(String permissionCode);
+
+    /**
      * 返回当前系统权限树
      * */
     List<PermissionTree> findFullPermissionTree();

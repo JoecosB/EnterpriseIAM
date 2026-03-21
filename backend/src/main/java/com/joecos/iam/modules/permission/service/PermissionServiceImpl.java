@@ -16,6 +16,7 @@ import java.util.List;
 @Service
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionMapper permissionMapper;
+    private final PermissionService permissionService;
 
     /**
      * 根据 ID 查询权限
@@ -93,6 +94,19 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         return codes;
+    }
+
+    /**
+     * 通过权限代码查询权限 ID
+     *
+     * @param permissionCode 权限代码
+     *
+     */
+    @Override
+    public Integer findPermissionIdByCode(String permissionCode) {
+        LambdaQueryWrapper<PermissionEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PermissionEntity::getPermissionCode, permissionCode);
+        return permissionMapper.selectOne(wrapper).getId();
     }
 
     /**
