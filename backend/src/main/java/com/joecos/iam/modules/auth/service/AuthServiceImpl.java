@@ -7,6 +7,7 @@ import com.joecos.iam.modules.permission.model.PermissionTree;
 import com.joecos.iam.modules.permission.model.PermissionTreeBuilder;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +26,8 @@ public class AuthServiceImpl implements AuthService {
         if(user == null) {return false;}
 
         // 校验密码
-        return Objects.equals(password, user.getPassword());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return Objects.equals(encoder.encode(password), user.getPassword());
     }
 
     /** 通过 ID 加载用户信息 */
