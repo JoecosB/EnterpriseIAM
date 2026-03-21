@@ -2,6 +2,7 @@ package com.joecos.iam.modules.user.service;
 
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.modules.user.model.UserDTO;
+import com.joecos.iam.modules.user.model.requests.AssignUserRolesRequest;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserStatusRequest;
@@ -80,6 +81,14 @@ public interface UserService {
       */
     void deleteUserById(Long userId);
 
+    /**
+     * 更新用户身份组
+     *
+     * @param userId 用户 ID
+     * @param roles 用户的新身份组列表
+     * */
+    void updateUserRoles(Long userId, List<Integer> roles);
+
 
     // 以下为 API 使用方法
     /**
@@ -124,4 +133,11 @@ public interface UserService {
      * */
     void updateUserStatus(Long userId, UpdateUserStatusRequest request);
 
+    /**
+     * API-更新用户角色表
+     *
+     * @param userId 用户 ID
+     * @param request AssignUserRolesRequest
+     * */
+    void assignUserRoles(Long userId, AssignUserRolesRequest request);
 }

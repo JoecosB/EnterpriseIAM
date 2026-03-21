@@ -1,6 +1,7 @@
 package com.joecos.iam.modules.user.controller;
 
 import com.joecos.iam.modules.user.model.UserDTO;
+import com.joecos.iam.modules.user.model.requests.AssignUserRolesRequest;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserStatusRequest;
@@ -65,5 +66,14 @@ public class UserController {
                                  @RequestBody UpdateUserStatusRequest request
     ) {
         userService.updateUserStatus(id, request);
+    }
+
+    /** 更新用户身份组 */
+    @PreAuthorize("hasAuthority('user:assign')")
+    @PostMapping("/{id}/roles")
+    public void assignUserRoles(@PathVariable Long id,
+                                @RequestBody AssignUserRolesRequest request
+    ) {
+        userService.assignUserRoles(id, request);
     }
 }

@@ -5,6 +5,7 @@ import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.joecos.iam.modules.role.service.RoleService;
 import com.joecos.iam.modules.user.model.UserDTO;
+import com.joecos.iam.modules.user.model.requests.AssignUserRolesRequest;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserStatusRequest;
@@ -219,6 +220,27 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 更新用户身份组
+     *
+     * @param userId 用户 ID
+     * @param roles  用户的新身份组列表
+     *
+     */
+    @Override
+    public void updateUserRoles(Long userId, List<Integer> roles) {
+        LambdaQueryWrapper<UserRoleEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserRoleEntity::getUserId, userId);
+        userRoleMapper.delete(wrapper);
+
+        for(Integer roleId : roles) {
+            UserRoleEntity userRole = new UserRoleEntity();
+            userRole.setUserId(userId);
+            userRole.setRoleId(roleId);
+            userRoleMapper.insert(userRole);
+        }
+    }
+
+    /**
      * API-创建用户
      *
      * @param request CreateUserRequest DTO
@@ -354,6 +376,26 @@ public class UserServiceImpl implements UserService {
 
         user.setStatus(newStatus);
         userMapper.updateById(user);
+    }
+
+    /**
+     * API-更新用户角色表
+     *
+     * @param userId  用户 ID
+     * @param request AssignUserRolesRequest
+     *
+     */
+    @Override
+    public void assignUserRoles(Long userId, AssignUserRolesRequest request) {
+        List<String> newRoles = request.getRoleNames();
+        List<Integer> newRoleIds = new ArrayList<>();
+
+        for(String roleName : newRoles) {
+            Integer roleId = roleService.findByName(roleName).getId();
+            newRoleIds.add(roleId);
+        }
+
+        updateUserRoles(userId, newRoleIds);
     }
 
 }
