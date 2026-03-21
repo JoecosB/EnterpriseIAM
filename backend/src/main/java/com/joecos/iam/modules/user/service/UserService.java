@@ -4,6 +4,7 @@ import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
+import com.joecos.iam.modules.user.model.requests.UpdateUserStatusRequest;
 
 import java.util.List;
 
@@ -114,5 +115,13 @@ public interface UserService {
      * @param userId 用户 ID
      * */
     void deleteUser(Long userId);
+
+    /**
+     * API-更新用户状态
+     *
+     * @param userId 用户 ID
+     * @param request UpdateUserStatusRequest
+     * */
+    void updateUserStatus(Long userId, UpdateUserStatusRequest request);
 
 }

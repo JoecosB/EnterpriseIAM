@@ -3,6 +3,7 @@ package com.joecos.iam.modules.user.controller;
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
+import com.joecos.iam.modules.user.model.requests.UpdateUserStatusRequest;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,4 +59,11 @@ public class UserController {
         userService.deleteUser(id);
     }
 
+    /** 更新用户状态 */
+    @PatchMapping("/{id}/status")
+    public void updateUserStatus(@PathVariable Long id,
+                                 @RequestBody UpdateUserStatusRequest request
+    ) {
+        userService.updateUserStatus(id, request);
+    }
 }

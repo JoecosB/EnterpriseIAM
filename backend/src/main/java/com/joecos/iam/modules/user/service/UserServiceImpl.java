@@ -7,10 +7,10 @@ import com.joecos.iam.modules.role.service.RoleService;
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
+import com.joecos.iam.modules.user.model.requests.UpdateUserStatusRequest;
 import com.joecos.iam.security.model.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -324,6 +324,36 @@ public class UserServiceImpl implements UserService {
         } else {
                  throw new RuntimeException("Permission not granted!");
         }
+    }
+
+    /**
+     * API-更新用户状态
+     *
+     * @param userId 用户 ID
+     * @param request UpdateUserStatusRequest
+     *
+     */
+    @Override
+    public void updateUserStatus(Long userId, UpdateUserStatusRequest request) {
+        UserEntity user = findUserById(userId);
+        Integer newStatus = request.getStatus();
+
+        if (newStatus != 0 && newStatus != 1) {
+            throw new RuntimeException("New status invalid!");
+        }
+
+        Integer oldStatus = user.getStatus();
+
+        if (Objects.equals(oldStatus, newStatus)) {
+            if (oldStatus == 1) {
+                throw new RuntimeException("User already enabled!");
+            } else {
+                throw new RuntimeException("User already disabled!");
+            }
+        }
+
+        user.setStatus(newStatus);
+        userMapper.updateById(user);
     }
 
 }
