@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -133,6 +132,15 @@ public class PermissionServiceImpl implements PermissionService {
         }
 
         return new PermissionDTO(permission.getId(), permission.getPermissionName());
+    }
+
+    /**
+     * API-查询系统完整权限树
+     *
+     */
+    @Override
+    public List<PermissionTree> getFullPermissionTree() {
+        return findFullPermissionTree();
     }
 
 

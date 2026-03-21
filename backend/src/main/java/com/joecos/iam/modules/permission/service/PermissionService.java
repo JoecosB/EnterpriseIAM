@@ -60,4 +60,9 @@ public interface PermissionService {
      * */
     PermissionDTO getPermissionById(Integer permissionId);
 
+    /**
+     * API-查询系统完整权限树
+     * */
+    List<PermissionTree> getFullPermissionTree();
+
 }

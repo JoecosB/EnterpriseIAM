@@ -5,6 +5,7 @@ import com.joecos.iam.modules.permission.model.PermissionTree;
 import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.permission.service.PermissionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,7 @@ public class PermissionController {
     private final PermissionService permissionService;
 
     /** 查询完整权限列表 */
+    @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping
     public List<PermissionDTO> getAllPermissions() {
         return permissionService.getAllPermissions();
@@ -28,5 +30,12 @@ public class PermissionController {
     @GetMapping("/{id}")
     public PermissionDTO getPermissionById(@PathVariable Integer id) {
         return permissionService.getPermissionById(id);
+    }
+
+    /** 查询系统权限树 */
+    @PreAuthorize("hasAuthority('permission:list')")
+    @GetMapping("/tree")
+    public List<PermissionTree> getFullPermissionTree() {
+        return permissionService.getFullPermissionTree();
     }
 }
