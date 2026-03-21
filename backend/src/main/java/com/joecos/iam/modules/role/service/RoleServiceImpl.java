@@ -3,6 +3,8 @@ package com.joecos.iam.modules.role.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.joecos.iam.modules.permission.service.PermissionService;
+import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +18,14 @@ public class RoleServiceImpl implements RoleService {
     private final RoleMapper roleMapper;
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
+    private final PermissionService permissionService;
 
 
-    /** 查询单个 ID 对应的角色 */
+    /**
+     * 查询单个 ID 对应的角色
+     *
+     * @param roleId 身份 ID
+     * */
     @Override
     public RoleEntity findById(Integer roleId) {
         LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
@@ -27,7 +34,11 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.selectOne(wrapper);
     }
 
-    /** 查询多个 ID 对应的角色 */
+    /**
+     * 查询多个 ID 对应的角色
+     *
+     * @param roleIds 身份 ID 列表
+     * */
     @Override
     public List<RoleEntity> findByIds(List<Integer> roleIds) {
 
@@ -41,7 +52,11 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.selectList(wrapper);
     }
 
-    /** 查询单个角色名称对应的角色 */
+    /**
+     * 查询单个角色名称对应的角色
+     *
+     * @param roleName 身份名称
+     * */
     @Override
     public RoleEntity findByName(String roleName) {
         LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
@@ -50,8 +65,11 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.selectOne(wrapper);
     }
 
-
-    /** 查询角色对应的权限 */
+    /**
+     * 查询角色对应的权限
+     *
+     * @param roleId 身份 ID
+     * */
     @Override
     public List<PermissionEntity> findRolePermissions(Integer roleId) {
 
@@ -82,8 +100,11 @@ public class RoleServiceImpl implements RoleService {
         return permissionMapper.selectList(permissionWrapper);
     }
 
-
-    /** 查询角色对应的权限代码 */
+    /**
+     * 查询角色对应的权限代码
+     *
+     * @param roleId 身份 ID
+     * */
     @Override
     public List<String> findPermissionCodes(Integer roleId) {
 
@@ -92,5 +113,40 @@ public class RoleServiceImpl implements RoleService {
         return permissions.stream()
                 .map(PermissionEntity::getPermissionCode)
                 .toList();
+    }
+
+    /**
+     * 更新身份组权限
+     *
+     * @param roleId             身份组 ID
+     * @param newPermissionCodes 新的权限列表
+     *
+     */
+    @Override
+    public void updateRolePermissions(Integer roleId, List<String> newPermissionCodes) {
+        LambdaQueryWrapper<RolePermissionEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RolePermissionEntity::getRoleId, roleId);
+        rolePermissionMapper.delete(wrapper);
+
+        newPermissionCodes.stream()
+                .map(permissionService::findPermissionIdByCode)
+                .forEach(permissionId ->
+                        rolePermissionMapper.insert(new RolePermissionEntity(roleId, permissionId))
+                );
+    }
+
+    /**
+     * API-赋予身份组权限
+     *
+     * @param roleId  身份组 ID
+     * @param request AssignRolePermissionRequest
+     *
+     */
+    @Override
+    public void assignRolePermission(Integer roleId, AssignRolePermissionRequest request) {
+        List<String> newPermissionCodes = request.getPermissionCodes();
+
+        updateRolePermissions(roleId, newPermissionCodes);
+
     }
 }
