@@ -6,10 +6,10 @@ DELETE FROM sys_user;
 
 INSERT INTO sys_user (`id`, `username`, `password`)
 VALUES
-    (1, 'ADMIN', 'admin'),
-    (2, 'user_manager_test', '123456'),
-    (3, 'role_manager_test', '123456'),
-    (4, 'viewer_test', '123456');
+    (1, 'ADMIN', '$2a$10$buFmRIKanQArIKc3aTdIn..abzYFkx2Maguo9uDLL0GcIB7nqpA9W'),
+    (2, 'user_manager_test', '$2a$10$3uNwSbfOZGVMRB.Jeoz1UuNiTm1wVBZ/xVSiqyGrTXSkRZXnTXc/m'),
+    (3, 'role_manager_test', '$2a$10$3uNwSbfOZGVMRB.Jeoz1UuNiTm1wVBZ/xVSiqyGrTXSkRZXnTXc/m'),
+    (4, 'viewer_test', '$2a$10$3uNwSbfOZGVMRB.Jeoz1UuNiTm1wVBZ/xVSiqyGrTXSkRZXnTXc/m');
 
 INSERT INTO sys_role (`id`, `role_code`, `role_name`)
 VALUES
