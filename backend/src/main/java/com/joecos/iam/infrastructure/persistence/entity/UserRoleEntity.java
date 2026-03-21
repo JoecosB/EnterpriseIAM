@@ -8,6 +8,6 @@ import lombok.Data;
 @TableName("sys_user_role")
 public class UserRoleEntity {
     @TableId
-    private Integer userId;
+    private Long userId;
     private Integer roleId;
 }
