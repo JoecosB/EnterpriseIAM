@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
 
         // 校验密码
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return Objects.equals(encoder.encode(password), user.getPassword());
+        return encoder.matches(password, user.getPassword());
     }
 
     /** 通过 ID 加载用户信息 */
