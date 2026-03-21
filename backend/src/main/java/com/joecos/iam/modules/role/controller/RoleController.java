@@ -25,6 +25,6 @@ public class RoleController {
     /** 获取身份权限 */
     @GetMapping("/{id}/permissions")
     public List<String> getRolePermissions(@PathVariable Integer id) {
-        return roleService.getPermissionCode(id);
+        return roleService.findPermissionCodes(id);
     }
 }

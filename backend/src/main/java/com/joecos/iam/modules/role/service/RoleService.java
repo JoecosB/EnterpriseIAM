@@ -6,6 +6,7 @@ import java.util.List;
 public interface RoleService {
     RoleEntity findById(Integer roleId);
     List<RoleEntity> findByIds(List<Integer> roleIds);
-    List<PermissionEntity> getRolePermissions(Integer roleId);
-    List<String> getPermissionCode(Integer roleId);
+    RoleEntity findByName(String roleName);
+    List<PermissionEntity> findRolePermissions(Integer roleId);
+    List<String> findPermissionCodes(Integer roleId);
 }

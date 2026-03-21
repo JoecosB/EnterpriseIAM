@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,10 +41,19 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.selectList(wrapper);
     }
 
+    /** 查询单个角色名称对应的角色 */
+    @Override
+    public RoleEntity findByName(String roleName) {
+        LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleEntity::getRoleName, roleName);
+
+        return roleMapper.selectOne(wrapper);
+    }
+
 
     /** 查询角色对应的权限 */
     @Override
-    public List<PermissionEntity> getRolePermissions(Integer roleId) {
+    public List<PermissionEntity> findRolePermissions(Integer roleId) {
 
         // 查询角色权限记录
         LambdaQueryWrapper<RolePermissionEntity> rolePermissionWrapper =
@@ -75,9 +85,9 @@ public class RoleServiceImpl implements RoleService {
 
     /** 查询角色对应的权限代码 */
     @Override
-    public List<String> getPermissionCode(Integer roleId) {
+    public List<String> findPermissionCodes(Integer roleId) {
 
-        List<PermissionEntity> permissions = getRolePermissions(roleId);
+        List<PermissionEntity> permissions = findRolePermissions(roleId);
 
         return permissions.stream()
                 .map(PermissionEntity::getPermissionCode)
