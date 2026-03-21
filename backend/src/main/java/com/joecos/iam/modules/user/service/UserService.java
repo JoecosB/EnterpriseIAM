@@ -72,6 +72,13 @@ public interface UserService {
      * */
     boolean checkUsernameExistence(String username);
 
+    /**
+     * 根据 ID 删除用户
+     *
+     * @param userId 用户 ID
+      */
+    void deleteUserById(Long userId);
+
 
     // 以下为 API 使用方法
     /**
@@ -100,5 +107,12 @@ public interface UserService {
      * @param request 请求体
      * */
     void updateUserInfo(Long userId, UpdateUserRequest request);
+
+    /**
+     * API-删除用户
+     *
+     * @param userId 用户 ID
+     * */
+    void deleteUser(Long userId);
 
 }

@@ -3,15 +3,21 @@ package com.joecos.iam.modules.user.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.joecos.iam.modules.role.service.RoleService;
 import com.joecos.iam.modules.user.model.UserDTO;
 import com.joecos.iam.modules.user.model.requests.CreateUserRequest;
 import com.joecos.iam.modules.user.model.requests.UpdateUserRequest;
+import com.joecos.iam.security.model.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -23,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final RoleService roleService;
 
     /**
      * 通过用户名查询用户
@@ -189,6 +196,29 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 根据 ID 删除用户
+     *
+     * @param userId 用户 ID
+     */
+    @Override
+    public void deleteUserById(Long userId) {
+        UserEntity user = findUserById(userId);
+        if (user == null) {
+            throw new RuntimeException("User doesn't exist!");
+        }
+
+        if (user.getDeleted() == 1) {
+            throw new RuntimeException("User already deleted!");
+        }
+
+        user.setDeleted(1);
+        user.setUsername("deletedUser_" + userId);
+        user.setEmail(null);
+        userMapper.updateById(user);
+
+    }
+
+    /**
      * API-创建用户
      *
      * @param request CreateUserRequest DTO
@@ -279,5 +309,21 @@ public class UserServiceImpl implements UserService {
         userMapper.updateById(userEntity);
     }
 
+    /**
+     * API-删除用户
+     *
+     * @param userId 用户 ID
+     * */
+    public void deleteUser(Long userId) {
+        UserPrincipal principal =(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long currentUserId = principal.getUserId();
+
+        if (Objects.equals(userId, currentUserId) || findPermissionCodesById(currentUserId).contains("user:delete")) {
+            deleteUserById(userId);
+
+        } else {
+                 throw new RuntimeException("Permission not granted!");
+        }
+    }
 
 }
