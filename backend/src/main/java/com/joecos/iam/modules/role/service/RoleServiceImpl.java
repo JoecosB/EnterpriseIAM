@@ -7,10 +7,10 @@ import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.permission.service.PermissionService;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.Role;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -203,5 +203,33 @@ public class RoleServiceImpl implements RoleService {
                 .map(permission ->
                         new PermissionDTO(permission.getId(), permission.getPermissionName())
                 ).toList();
+    }
+
+    /**
+     * API-更新身份组信息
+     *
+     * @param roleId  身份组 ID
+     * @param request UpdateRoleRequest
+     *
+     */
+    @Override
+    public void updateRoleInfo(Integer roleId, UpdateRoleInfoRequest request) {
+        String newRoleName = request.getRoleName();
+        String newRoleDesc = request.getRoleDesc();
+
+        RoleEntity role = findById(roleId);
+
+        if (newRoleName != null) {
+            if (findByName(newRoleName) != null) {
+                throw new RuntimeException("Role name exists!");
+            }
+            role.setRoleName(newRoleName);
+        }
+
+        if (newRoleDesc != null) {
+            role.setDescription(newRoleDesc);
+        }
+
+        roleMapper.updateById(role);
     }
 }

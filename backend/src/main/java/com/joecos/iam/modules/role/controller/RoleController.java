@@ -1,12 +1,12 @@
 package com.joecos.iam.modules.role.controller;
 
-import com.joecos.iam.infrastructure.persistence.entity.RoleEntity;
 import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
 import com.joecos.iam.modules.role.service.RoleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +30,7 @@ public class RoleController {
     }
 
     /** 更新身份组权限 */
+    @PreAuthorize("hasAuthority('role:update')")
     @PostMapping("/{id}/permissions")
     public void assignRolePermission(@PathVariable Integer id,
                                      @RequestBody AssignRolePermissionRequest request
@@ -41,5 +42,13 @@ public class RoleController {
     @GetMapping
     public List<RoleDTO> getAllRoles() {
         return roleService.getAllRoles();
+    }
+
+    /** 更新身份组信息 */
+    @PreAuthorize("hasAuthority('role:update')")
+    @PutMapping("/{id}")
+    public void updateRoleInfo(@PathVariable Integer id,
+                               @RequestBody UpdateRoleInfoRequest request) {
+        roleService.updateRoleInfo(id, request);
     }
 }

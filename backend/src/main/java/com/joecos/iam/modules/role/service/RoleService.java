@@ -4,6 +4,7 @@ import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
 
 import java.util.List;
 
@@ -87,4 +88,12 @@ public interface RoleService {
      * @param roleId 身份组 ID
      * */
     List<PermissionDTO> getRolePermissions(Integer roleId);
+
+    /**
+     * API-更新身份组信息
+     *
+     * @param roleId 身份组 ID
+     * @param request UpdateRoleRequest
+     * */
+    void updateRoleInfo(Integer roleId, UpdateRoleInfoRequest request);
 }
