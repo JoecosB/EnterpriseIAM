@@ -8,4 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class RoleDTO {
     private final Integer roleId;
     private final String roleName;
+    private final String roleDesc;
 }

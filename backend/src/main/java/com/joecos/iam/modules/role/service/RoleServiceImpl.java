@@ -143,7 +143,6 @@ public class RoleServiceImpl implements RoleService {
      */
     @Override
     public List<RoleEntity> findAllRoles() {
-        System.out.println(1111);
         return roleMapper.selectList(null);
     }
 
@@ -171,11 +170,21 @@ public class RoleServiceImpl implements RoleService {
     public List<RoleDTO> getAllRoles() {
         List<RoleEntity> roles = findAllRoles();
 
-        System.out.println(roles);
-
         return roles.stream()
                 .map(role ->
-                        new RoleDTO(role.getId(), role.getRoleName())
+                        new RoleDTO(role.getId(), role.getRoleName(), role.getDescription())
                 ).toList();
+    }
+
+    /**
+     * API-查询单个身份组信息
+     *
+     * @param roleId 身份组 ID
+     *
+     */
+    @Override
+    public RoleDTO getRoleById(Integer roleId) {
+        RoleEntity role = findById(roleId);
+        return new RoleDTO(role.getId(), role.getRoleName(), role.getDescription());
     }
 }

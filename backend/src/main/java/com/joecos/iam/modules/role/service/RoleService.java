@@ -58,6 +58,7 @@ public interface RoleService {
      */
     List<RoleEntity> findAllRoles();
 
+
     // 以下为 API 使用方法
     /**
      * API-赋予身份组权限
@@ -71,4 +72,11 @@ public interface RoleService {
      * API-查询完整身份组列表
      * */
     List<RoleDTO> getAllRoles();
+
+    /**
+     * API-查询单个身份组信息
+     *
+     * @param roleId 身份组 ID
+     * */
+    RoleDTO getRoleById(Integer roleId);
 }

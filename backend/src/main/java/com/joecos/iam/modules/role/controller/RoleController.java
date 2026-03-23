@@ -17,8 +17,8 @@ public class RoleController {
 
     /** 获取身份组信息 */
     @GetMapping("/{id}")
-    public RoleEntity getRoleById(@PathVariable Integer id) {
-        return roleService.findById(id);
+    public RoleDTO getRoleById(@PathVariable Integer id) {
+        return roleService.getRoleById(id);
     }
 
     /** 获取身份组权限 */
