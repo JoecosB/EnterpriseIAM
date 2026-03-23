@@ -4,6 +4,7 @@ import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.joecos.iam.modules.permission.service.PermissionService;
+import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -136,6 +137,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
+     * 查询所有身份组
+     *
+     *
+     */
+    @Override
+    public List<RoleEntity> findAllRoles() {
+        System.out.println(1111);
+        return roleMapper.selectList(null);
+    }
+
+    /**
      * API-赋予身份组权限
      *
      * @param roleId  身份组 ID
@@ -148,5 +160,22 @@ public class RoleServiceImpl implements RoleService {
 
         updateRolePermissions(roleId, newPermissionCodes);
 
+    }
+
+    /**
+     * API-查询完整角色列表
+     *
+     *
+     */
+    @Override
+    public List<RoleDTO> getAllRoles() {
+        List<RoleEntity> roles = findAllRoles();
+
+        System.out.println(roles);
+
+        return roles.stream()
+                .map(role ->
+                        new RoleDTO(role.getId(), role.getRoleName())
+                ).toList();
     }
 }

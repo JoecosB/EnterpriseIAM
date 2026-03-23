@@ -1,6 +1,7 @@
 package com.joecos.iam.modules.role.service;
 
 import com.joecos.iam.infrastructure.persistence.entity.*;
+import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
 
 import java.util.List;
@@ -50,6 +51,13 @@ public interface RoleService {
      * */
     void updateRolePermissions(Integer roleId, List<String> newPermissionCodes);
 
+    /**
+     * 查询所有身份组
+     *
+     *
+     */
+    List<RoleEntity> findAllRoles();
+
     // 以下为 API 使用方法
     /**
      * API-赋予身份组权限
@@ -58,4 +66,9 @@ public interface RoleService {
      * @param request AssignRolePermissionRequest
      * */
     void assignRolePermission(Integer roleId, AssignRolePermissionRequest request);
+
+    /**
+     * API-查询完整身份组列表
+     * */
+    List<RoleDTO> getAllRoles();
 }

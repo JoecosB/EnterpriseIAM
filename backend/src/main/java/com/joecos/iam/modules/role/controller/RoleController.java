@@ -1,6 +1,7 @@
 package com.joecos.iam.modules.role.controller;
 
 import com.joecos.iam.infrastructure.persistence.entity.RoleEntity;
+import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
 import com.joecos.iam.modules.role.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,11 @@ public class RoleController {
                                      @RequestBody AssignRolePermissionRequest request
     ) {
         roleService.assignRolePermission(id, request);
+    }
+
+    /** 查询完整身份列表 */
+    @GetMapping
+    public List<RoleDTO> getAllRoles() {
+        return roleService.getAllRoles();
     }
 }

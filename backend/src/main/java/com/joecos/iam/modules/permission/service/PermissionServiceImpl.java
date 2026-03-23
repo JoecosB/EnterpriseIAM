@@ -16,7 +16,6 @@ import java.util.List;
 @Service
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionMapper permissionMapper;
-    private final PermissionService permissionService;
 
     /**
      * 根据 ID 查询权限
