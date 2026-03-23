@@ -58,7 +58,7 @@ public class RoleController {
 
     /** 创建新身份组 */
     @PreAuthorize("hasAuthority('role:create')")
-    @PostMapping("/create")
+    @PostMapping
     public Integer createRole(@RequestBody CreateRoleRequest request) {
         return roleService.createRole(request);
     }
