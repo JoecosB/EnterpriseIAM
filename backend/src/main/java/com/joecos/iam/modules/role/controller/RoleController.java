@@ -1,10 +1,12 @@
 package com.joecos.iam.modules.role.controller;
 
 import com.joecos.iam.infrastructure.persistence.entity.RoleEntity;
+import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
 import com.joecos.iam.modules.role.service.RoleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,8 +25,8 @@ public class RoleController {
 
     /** 获取身份组权限 */
     @GetMapping("/{id}/permissions")
-    public List<String> getRolePermissions(@PathVariable Integer id) {
-        return roleService.findPermissionCodes(id);
+    public List<PermissionDTO> getRolePermissions(@PathVariable Integer id) {
+        return roleService.getRolePermissions(id);
     }
 
     /** 更新身份组权限 */

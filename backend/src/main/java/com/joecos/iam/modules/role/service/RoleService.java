@@ -1,6 +1,7 @@
 package com.joecos.iam.modules.role.service;
 
 import com.joecos.iam.infrastructure.persistence.entity.*;
+import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
 
@@ -79,4 +80,11 @@ public interface RoleService {
      * @param roleId 身份组 ID
      * */
     RoleDTO getRoleById(Integer roleId);
+
+    /**
+     * API-查询身份组权限
+     *
+     * @param roleId 身份组 ID
+     * */
+    List<PermissionDTO> getRolePermissions(Integer roleId);
 }

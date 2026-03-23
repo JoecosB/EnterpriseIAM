@@ -3,6 +3,7 @@ package com.joecos.iam.modules.role.service;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.permission.service.PermissionService;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
@@ -186,5 +187,21 @@ public class RoleServiceImpl implements RoleService {
     public RoleDTO getRoleById(Integer roleId) {
         RoleEntity role = findById(roleId);
         return new RoleDTO(role.getId(), role.getRoleName(), role.getDescription());
+    }
+
+    /**
+     * API-查询身份组权限
+     *
+     * @param roleId 身份组 ID
+     *
+     */
+    @Override
+    public List<PermissionDTO> getRolePermissions(Integer roleId) {
+        List<PermissionEntity> permissions = findRolePermissions(roleId);
+
+        return permissions.stream()
+                .map(permission ->
+                        new PermissionDTO(permission.getId(), permission.getPermissionName())
+                ).toList();
     }
 }
