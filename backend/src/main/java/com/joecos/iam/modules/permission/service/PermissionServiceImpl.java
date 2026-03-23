@@ -5,6 +5,7 @@ import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.joecos.iam.infrastructure.persistence.mapper.PermissionMapper;
 import com.joecos.iam.modules.permission.model.PermissionTree;
 import com.joecos.iam.modules.permission.model.PermissionTreeBuilder;
+import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +17,22 @@ import java.util.List;
 public class PermissionServiceImpl implements PermissionService {
     private final PermissionMapper permissionMapper;
 
-    /** 根据 ID 查询权限 */
+    /**
+     * 根据 ID 查询权限
+     *
+     * @param permissionId 权限 ID
+     * */
     @Override
     public PermissionEntity findById(Integer permissionId) {
 
         return permissionMapper.selectById(permissionId);
     }
 
-
-    /** 根据多个 ID 查询权限 */
+    /**
+     * 根据多个 ID 查询权限
+     *
+     * @param permissionIds 权限 ID 列表
+     * */
     @Override
     public List<PermissionEntity> findByIds(List<Integer> permissionIds) {
 
@@ -38,17 +46,22 @@ public class PermissionServiceImpl implements PermissionService {
         return permissionMapper.selectList(wrapper);
     }
 
-
-    /** 查询全部权限 */
+    /**
+     * 查询全部权限
+     * */
     @Override
-    public List<PermissionEntity> getAllPermissions() {
+    public List<PermissionEntity> findAllPermissions() {
 
         return permissionMapper.selectList(null);
     }
 
-    /** 根据单个权限 ID 查询权限代码 */
+    /**
+     * 根据单个权限 ID 查询权限代码
+     *
+     * @param permissionId 权限 ID
+     * */
     @Override
-    public String getPermissionCode(Integer permissionId) {
+    public String findPermissionCodeById(Integer permissionId) {
         LambdaQueryWrapper<PermissionEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(PermissionEntity::getId, permissionId);
         PermissionEntity permission = permissionMapper.selectById(wrapper);
@@ -56,10 +69,13 @@ public class PermissionServiceImpl implements PermissionService {
         return permission.getPermissionCode();
     }
 
-
-    /** 根据多个权限 ID 查询权限代码 */
+    /**
+     * 根据多个权限 ID 查询权限代码
+     *
+     * @param permissionIds 权限 ID 列表
+     * */
     @Override
-    public List<String> getPermissionCodes(List<Integer> permissionIds) {
+    public List<String> findPermissionCodeByIds(List<Integer> permissionIds) {
 
         if (permissionIds == null || permissionIds.isEmpty()) {
             return new ArrayList<>();
@@ -79,11 +95,66 @@ public class PermissionServiceImpl implements PermissionService {
         return codes;
     }
 
-    /** 返回当前系统权限树 */
+    /**
+     * 通过权限代码查询权限 ID
+     *
+     * @param permissionCode 权限代码
+     *
+     */
     @Override
-    public List<PermissionTree> getFullPermissionTree() {
-        List<PermissionEntity> permissions = getAllPermissions();
+    public Integer findPermissionIdByCode(String permissionCode) {
+        LambdaQueryWrapper<PermissionEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PermissionEntity::getPermissionCode, permissionCode);
+        return permissionMapper.selectOne(wrapper).getId();
+    }
+
+    /**
+     * 返回当前系统权限树
+     * */
+    @Override
+    public List<PermissionTree> findFullPermissionTree() {
+        List<PermissionEntity> permissions = findAllPermissions();
 
         return PermissionTreeBuilder.build(permissions);
     }
+
+    /**
+     * API-查询完整权限列表
+     *
+     */
+    @Override
+    public List<PermissionDTO> getAllPermissions() {
+
+        return findAllPermissions().stream()
+                .map(permission ->
+                        new PermissionDTO(permission.getId(), permission.getPermissionName())
+                ).toList();
+    }
+
+    /**
+     * API-通过 ID 查询单个权限
+     *
+     * @param permissionId 权限 ID
+     */
+    @Override
+    public PermissionDTO getPermissionById(Integer permissionId) {
+        PermissionEntity permission = findById(permissionId);
+
+        if (permission == null) {
+            throw new RuntimeException("Permission doesn't exist!");
+        }
+
+        return new PermissionDTO(permission.getId(), permission.getPermissionName());
+    }
+
+    /**
+     * API-查询系统完整权限树
+     *
+     */
+    @Override
+    public List<PermissionTree> getFullPermissionTree() {
+        return findFullPermissionTree();
+    }
+
+
 }

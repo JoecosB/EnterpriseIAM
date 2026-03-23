@@ -2,8 +2,10 @@ package com.joecos.iam.modules.permission.controller;
 
 import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.joecos.iam.modules.permission.model.PermissionTree;
+import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.permission.service.PermissionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,25 +19,22 @@ import java.util.List;
 public class PermissionController {
     private final PermissionService permissionService;
 
-    /** 获取单个权限信息 */
-    @GetMapping("/{id}")
-    public PermissionEntity getPermission(@PathVariable Integer id) {
-        return permissionService.findById(id);
-    }
-
-    /** 查询单个权限代码 */
-    @GetMapping("/{id}/code")
-    public String getPermissionCode(@PathVariable Integer id) {
-        return permissionService.getPermissionCode(id);
-    }
-
-    /** 获取全部权限 */
+    /** 查询完整权限列表 */
+    @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping
-    public List<PermissionEntity> getAllPermissions() {
+    public List<PermissionDTO> getAllPermissions() {
         return permissionService.getAllPermissions();
     }
 
-    /** 获取完整权限树 */
+    /** 通过 ID 查询单个权限 */
+    @PreAuthorize("hasAuthority('permission:list')")
+    @GetMapping("/{id}")
+    public PermissionDTO getPermissionById(@PathVariable Integer id) {
+        return permissionService.getPermissionById(id);
+    }
+
+    /** 查询系统权限树 */
+    @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping("/tree")
     public List<PermissionTree> getFullPermissionTree() {
         return permissionService.getFullPermissionTree();

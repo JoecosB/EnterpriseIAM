@@ -5,48 +5,92 @@ DELETE FROM sys_role;
 DELETE FROM sys_user;
 
 INSERT INTO sys_user (`id`, `username`, `password`)
-    VALUES (1, 'ADMIN', 'admin');
+VALUES
+    (1, 'ADMIN', '$2a$10$buFmRIKanQArIKc3aTdIn..abzYFkx2Maguo9uDLL0GcIB7nqpA9W'),
+    (2, 'user_manager_test', '$2a$10$3uNwSbfOZGVMRB.Jeoz1UuNiTm1wVBZ/xVSiqyGrTXSkRZXnTXc/m'),
+    (3, 'role_manager_test', '$2a$10$3uNwSbfOZGVMRB.Jeoz1UuNiTm1wVBZ/xVSiqyGrTXSkRZXnTXc/m'),
+    (4, 'viewer_test', '$2a$10$3uNwSbfOZGVMRB.Jeoz1UuNiTm1wVBZ/xVSiqyGrTXSkRZXnTXc/m');
 
-INSERT INTO sys_role (`id`, `role_code`, role_name)
-    VALUES (1,1,'administrator');
+INSERT INTO sys_role (`id`, `role_code`, `role_name`)
+VALUES
+    (1, 1, 'administrator'),
+    (2, 2, 'user_manager'),
+    (3, 3, 'role_manager'),
+    (4, 4, 'viewer');
 
 INSERT INTO sys_permission(`id`, `permission_name`, `permission_code`, `type`, `parent_id`)
-    VALUES
-        (1, 'DashBoard', 'dashboard', 'MENU', NULL),
-        (2, 'User Management', 'user', 'MENU', NULL),
-        (3, 'Role Management', 'role', 'MENU', NULL),
-        (4, 'Permission Management', 'permission', 'MENU', NULL),
-        (10, 'User List', 'user:list', 'MENU', 2),
-        (11, 'Create User', 'user:create', 'BUTTON', 2),
-        (12, 'Update User', 'user:update', 'BUTTON', 2),
-        (13, 'Delete User', 'user:delete', 'BUTTON', 2),
-        (20, 'Role List', 'role:list', 'MENU', 3),
-        (21, 'Create Role', 'role:create', 'BUTTON', 3),
-        (22, 'Update Role', 'role:update', 'BUTTON', 3),
-        (23, 'Delete Role', 'role:delete', 'BUTTON', 3),
-        (30, 'Permission List', 'permission:list', 'MENU', 4),
-        (31, 'Create Permission', 'permission:create', 'BUTTON', 4),
-        (32, 'Update Permission', 'permission:update', 'BUTTON', 4),
-        (33, 'Delete Permission', 'permission:delete', 'BUTTON', 4);
+VALUES
+    (1, 'DashBoard', 'dashboard', 'MENU', NULL),
+    (2, 'User Management', 'user', 'MENU', NULL),
+    (3, 'Role Management', 'role', 'MENU', NULL),
+    (4, 'Permission Management', 'permission', 'MENU', NULL),
+
+    (10, 'User List', 'user:list', 'MENU', 2),
+    (11, 'Create User', 'user:create', 'BUTTON', 2),
+    (12, 'Update User', 'user:update', 'BUTTON', 2),
+    (13, 'Delete User', 'user:delete', 'BUTTON', 2),
+    (14, 'Assign User', 'user:assign', 'BUTTON', 2),
+
+    (20, 'Role List', 'role:list', 'MENU', 3),
+    (21, 'Create Role', 'role:create', 'BUTTON', 3),
+    (22, 'Update Role', 'role:update', 'BUTTON', 3),
+    (23, 'Delete Role', 'role:delete', 'BUTTON', 3),
+
+    (30, 'Permission List', 'permission:list', 'MENU', 4),
+    (31, 'Create Permission', 'permission:create', 'BUTTON', 4),
+    (32, 'Update Permission', 'permission:update', 'BUTTON', 4),
+    (33, 'Delete Permission', 'permission:delete', 'BUTTON', 4);
 
 INSERT INTO sys_user_role(`user_id`, `role_id`)
-    VALUES (1, 1);
+VALUES
+    (1, 1),
+    (2, 2),
+    (3, 3),
+    (4, 4);
 
 INSERT INTO sys_role_permission(`role_id`, `permission_id`)
-    VALUES
-        (1, 1),
-        (1, 2),
-        (1, 3),
-        (1, 4),
-        (1, 10),
-        (1, 11),
-        (1, 12),
-        (1, 13),
-        (1, 20),
-        (1, 21),
-        (1, 22),
-        (1, 23),
-        (1, 30),
-        (1, 31),
-        (1, 32),
-        (1, 33)
+VALUES
+    -- administrator
+    (1, 1),
+    (1, 2),
+    (1, 3),
+    (1, 4),
+    (1, 10),
+    (1, 11),
+    (1, 12),
+    (1, 13),
+    (1, 14),
+    (1, 20),
+    (1, 21),
+    (1, 22),
+    (1, 23),
+    (1, 30),
+    (1, 31),
+    (1, 32),
+    (1, 33),
+
+    -- user_manager
+    (2, 1),
+    (2, 2),
+    (2, 10),
+    (2, 11),
+    (2, 12),
+    (2, 13),
+    (2, 14),
+
+    -- role_manager
+    (3, 1),
+    (3, 3),
+    (3, 20),
+    (3, 21),
+    (3, 22),
+    (3, 23),
+
+    -- viewer
+    (4, 1),
+    (4, 2),
+    (4, 3),
+    (4, 4),
+    (4, 10),
+    (4, 20),
+    (4, 30);

@@ -7,6 +7,7 @@ import com.joecos.iam.modules.permission.model.PermissionTree;
 import com.joecos.iam.modules.permission.model.PermissionTreeBuilder;
 import com.joecos.iam.modules.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,19 +22,20 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Boolean loginByUsername(String username, String password) {
         // 通过用户名获取用户
-        UserEntity user = userService.findByUsername(username);
+        UserEntity user = userService.findUserByUsername(username);
         if(user == null) {return false;}
 
         // 校验密码
-        return Objects.equals(password, user.getPassword());
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder.matches(password, user.getPassword());
     }
 
     /** 通过 ID 加载用户信息 */
     @Override
     public AuthResult loadUserById(Long userId) {
         AuthResult result = new AuthResult();
-        UserEntity user = userService.findById(userId);
-        List<PermissionEntity> permissions = userService.getUserPermissions(userId);
+        UserEntity user = userService.findUserById(userId);
+        List<PermissionEntity> permissions = userService.findPermissionsById(userId);
         List<PermissionTree> permissionTree = PermissionTreeBuilder.build(permissions);
 
         result.setUserId(userId);
@@ -46,7 +48,7 @@ public class AuthServiceImpl implements AuthService {
     /** 通过用户名加载用户信息 */
     @Override
     public AuthResult loadUserByUsername(String Username) {
-        Long userId = userService.getUserIdByUsername(Username);
+        Long userId = userService.findUserIdByUsername(Username);
         return loadUserById(userId);
     }
 }

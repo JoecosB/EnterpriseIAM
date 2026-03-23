@@ -1,11 +1,127 @@
 package com.joecos.iam.modules.role.service;
 
 import com.joecos.iam.infrastructure.persistence.entity.*;
+import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
+import com.joecos.iam.modules.role.model.RoleDTO;
+import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.CreateRoleRequest;
+import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
+
 import java.util.List;
 
 public interface RoleService {
+    // 以下为后端使用方法
+    /**
+     * 查询单个 ID 对应的角色
+     *
+     * @param roleId 身份 ID
+     * */
     RoleEntity findById(Integer roleId);
+
+    /**
+     * 查询多个 ID 对应的角色
+     *
+     * @param roleIds 身份 ID 列表
+     * */
     List<RoleEntity> findByIds(List<Integer> roleIds);
-    List<PermissionEntity> getRolePermissions(Integer roleId);
-    List<String> getPermissionCode(Integer roleId);
+
+    /**
+     * 查询单个角色名称对应的角色
+     *
+     * @param roleName 身份名称
+     * */
+    RoleEntity findByName(String roleName);
+
+    /**
+     * 查询单个代码对应的身份组
+     *
+     * @param roleCode 身份组代码
+     * */
+    RoleEntity findByCode(Integer roleCode);
+
+    /**
+     * 查询角色对应的权限
+     *
+     * @param roleId 身份 ID
+     * */
+    List<PermissionEntity> findRolePermissions(Integer roleId);
+
+    /**
+     * 查询角色对应的权限代码
+     *
+     * @param roleId 身份 ID
+     * */
+    List<String> findPermissionCodes(Integer roleId);
+
+    /**
+     * 更新身份组权限
+     *
+     * @param roleId 身份组 ID
+     * @param newPermissionCodes 新的权限列表
+     * */
+    void updateRolePermissions(Integer roleId, List<String> newPermissionCodes);
+
+    /**
+     * 查询所有身份组
+     *
+     *
+     */
+    List<RoleEntity> findAllRoles();
+
+    /** 根据 ID 删除身份组
+     *
+     * @param roleId 身份组 ID
+     * */
+    void deleteRoleById(Integer roleId);
+
+
+    // 以下为 API 使用方法
+    /**
+     * API-赋予身份组权限
+     *
+     * @param roleId 身份组 ID
+     * @param request AssignRolePermissionRequest
+     * */
+    void assignRolePermission(Integer roleId, AssignRolePermissionRequest request);
+
+    /**
+     * API-查询完整身份组列表
+     * */
+    List<RoleDTO> getAllRoles();
+
+    /**
+     * API-查询单个身份组信息
+     *
+     * @param roleId 身份组 ID
+     * */
+    RoleDTO getRoleById(Integer roleId);
+
+    /**
+     * API-查询身份组权限
+     *
+     * @param roleId 身份组 ID
+     * */
+    List<PermissionDTO> getRolePermissions(Integer roleId);
+
+    /**
+     * API-更新身份组信息
+     *
+     * @param roleId 身份组 ID
+     * @param request UpdateRoleRequest
+     * */
+    void updateRoleInfo(Integer roleId, UpdateRoleInfoRequest request);
+
+    /**
+     * API-创建新身份组
+     *
+     * @param request CreateRoleRequest
+     * */
+    Integer createRole(CreateRoleRequest request);
+
+    /**
+     * API-删除身份组
+     *
+     * @param roleId 身份组 ID
+     * */
+    void deleteRole(Integer roleId);
 }
