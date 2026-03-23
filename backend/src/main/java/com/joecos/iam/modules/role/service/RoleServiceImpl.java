@@ -163,6 +163,23 @@ public class RoleServiceImpl implements RoleService {
     }
 
     /**
+     * 根据 ID 删除身份组
+     *
+     * @param roleId 身份组 ID
+     *
+     */
+    @Override
+    public void deleteRoleById(Integer roleId) {
+        LambdaQueryWrapper<RolePermissionEntity> rolePermissionWrapper = new LambdaQueryWrapper<>();
+        rolePermissionWrapper.eq(RolePermissionEntity::getRoleId, roleId);
+        rolePermissionMapper.delete(rolePermissionWrapper);
+
+        LambdaQueryWrapper<RoleEntity> roleWrapper = new LambdaQueryWrapper<>();
+        roleWrapper.eq(RoleEntity::getId, roleId);
+        roleMapper.delete(roleWrapper);
+    }
+
+    /**
      * API-赋予身份组权限
      *
      * @param roleId  身份组 ID
@@ -271,5 +288,18 @@ public class RoleServiceImpl implements RoleService {
 
         roleMapper.insert(newRole);
         return newRole.getId();
+    }
+
+    /**
+     * API-删除身份组
+     *
+     * @param roleId 身份组 ID
+     *
+     */
+    @Override
+    public void deleteRole(Integer roleId) {
+        if (findById(roleId) != null) {
+            deleteRoleById(roleId);
+        }
     }
 }

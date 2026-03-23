@@ -68,6 +68,12 @@ public interface RoleService {
      */
     List<RoleEntity> findAllRoles();
 
+    /** 根据 ID 删除身份组
+     *
+     * @param roleId 身份组 ID
+     * */
+    void deleteRoleById(Integer roleId);
+
 
     // 以下为 API 使用方法
     /**
@@ -111,4 +117,11 @@ public interface RoleService {
      * @param request CreateRoleRequest
      * */
     Integer createRole(CreateRoleRequest request);
+
+    /**
+     * API-删除身份组
+     *
+     * @param roleId 身份组 ID
+     * */
+    void deleteRole(Integer roleId);
 }

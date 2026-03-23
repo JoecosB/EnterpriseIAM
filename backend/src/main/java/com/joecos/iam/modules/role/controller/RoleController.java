@@ -59,4 +59,11 @@ public class RoleController {
     public Integer createRole(@RequestBody CreateRoleRequest request) {
         return roleService.createRole(request);
     }
+
+    /** 删除身份组 */
+    @PreAuthorize("hasAuthority('role:delete')")
+    @DeleteMapping("/{id}")
+    public void deleteRole(@PathVariable Integer id) {
+        roleService.deleteRole(id);
+    }
 }
