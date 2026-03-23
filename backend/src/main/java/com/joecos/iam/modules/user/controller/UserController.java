@@ -19,6 +19,7 @@ public class UserController {
     private final UserService userService;
 
     /** 获取用户权限 */
+    @PreAuthorize("hasAuthority('user:list')")
     @GetMapping("/{id}/permissions")
     public List<String> getUserPermissions(@PathVariable Long id) {
         return userService.findPermissionCodesById(id);
@@ -55,12 +56,14 @@ public class UserController {
     }
 
     /** 删除用户 */
+    @PreAuthorize("hasAuthority('user:delete')")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
     /** 更新用户状态 */
+    @PreAuthorize("hasAuthority('user:update')")
     @PatchMapping("/{id}/status")
     public void updateUserStatus(@PathVariable Long id,
                                  @RequestBody UpdateUserStatusRequest request

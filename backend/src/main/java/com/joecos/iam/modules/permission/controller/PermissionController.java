@@ -27,6 +27,7 @@ public class PermissionController {
     }
 
     /** 通过 ID 查询单个权限 */
+    @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping("/{id}")
     public PermissionDTO getPermissionById(@PathVariable Integer id) {
         return permissionService.getPermissionById(id);

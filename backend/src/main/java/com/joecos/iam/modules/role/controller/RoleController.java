@@ -19,12 +19,14 @@ public class RoleController {
     private final RoleService roleService;
 
     /** 获取身份组信息 */
+    @PreAuthorize("hasAuthority('role:list')")
     @GetMapping("/{id}")
     public RoleDTO getRoleById(@PathVariable Integer id) {
         return roleService.getRoleById(id);
     }
 
     /** 获取身份组权限 */
+    @PreAuthorize("hasAuthority('role:list')")
     @GetMapping("/{id}/permissions")
     public List<PermissionDTO> getRolePermissions(@PathVariable Integer id) {
         return roleService.getRolePermissions(id);
@@ -40,6 +42,7 @@ public class RoleController {
     }
 
     /** 查询完整身份列表 */
+    @PreAuthorize("hasAuthority('role:list')")
     @GetMapping
     public List<RoleDTO> getAllRoles() {
         return roleService.getAllRoles();
