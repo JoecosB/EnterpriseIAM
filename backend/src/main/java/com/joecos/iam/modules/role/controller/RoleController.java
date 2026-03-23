@@ -3,6 +3,7 @@ package com.joecos.iam.modules.role.controller;
 import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.CreateRoleRequest;
 import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
 import com.joecos.iam.modules.role.service.RoleService;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,12 @@ public class RoleController {
     public void updateRoleInfo(@PathVariable Integer id,
                                @RequestBody UpdateRoleInfoRequest request) {
         roleService.updateRoleInfo(id, request);
+    }
+
+    /** 创建新身份组 */
+    @PreAuthorize("hasAuthority('role:create')")
+    @PostMapping("/create")
+    public Integer createRole(@RequestBody CreateRoleRequest request) {
+        return roleService.createRole(request);
     }
 }

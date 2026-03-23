@@ -7,6 +7,7 @@ import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.permission.service.PermissionService;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.CreateRoleRequest;
 import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,20 @@ public class RoleServiceImpl implements RoleService {
     public RoleEntity findByName(String roleName) {
         LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RoleEntity::getRoleName, roleName);
+
+        return roleMapper.selectOne(wrapper);
+    }
+
+    /**
+     * 查询单个代码对应的身份组
+     *
+     * @param roleCode 身份组代码
+     *
+     */
+    @Override
+    public RoleEntity findByCode(Integer roleCode) {
+        LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleEntity::getRoleCode, roleCode);
 
         return roleMapper.selectOne(wrapper);
     }
@@ -231,5 +246,30 @@ public class RoleServiceImpl implements RoleService {
         }
 
         roleMapper.updateById(role);
+    }
+
+    /**
+     * API-创建新身份组
+     *
+     * @param request CreateRoleRequest
+     *
+     */
+    @Override
+    public Integer createRole(CreateRoleRequest request) {
+        RoleEntity newRole = new RoleEntity();
+
+        if (findByName(request.getRoleName()) != null) {
+            throw new RuntimeException("Role name exists!");
+        }
+        if (findByCode(request.getRoleCode()) != null) {
+            throw new RuntimeException("Role code exists!");
+        }
+
+        newRole.setDescription(request.getRoleDesc());
+        newRole.setRoleName(request.getRoleName());
+        newRole.setRoleCode(request.getRoleCode());
+
+        roleMapper.insert(newRole);
+        return newRole.getId();
     }
 }

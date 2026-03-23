@@ -4,6 +4,7 @@ import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
 import com.joecos.iam.modules.role.model.RoleDTO;
 import com.joecos.iam.modules.role.model.request.AssignRolePermissionRequest;
+import com.joecos.iam.modules.role.model.request.CreateRoleRequest;
 import com.joecos.iam.modules.role.model.request.UpdateRoleInfoRequest;
 
 import java.util.List;
@@ -30,6 +31,13 @@ public interface RoleService {
      * @param roleName 身份名称
      * */
     RoleEntity findByName(String roleName);
+
+    /**
+     * 查询单个代码对应的身份组
+     *
+     * @param roleCode 身份组代码
+     * */
+    RoleEntity findByCode(Integer roleCode);
 
     /**
      * 查询角色对应的权限
@@ -96,4 +104,11 @@ public interface RoleService {
      * @param request UpdateRoleRequest
      * */
     void updateRoleInfo(Integer roleId, UpdateRoleInfoRequest request);
+
+    /**
+     * API-创建新身份组
+     *
+     * @param request CreateRoleRequest
+     * */
+    Integer createRole(CreateRoleRequest request);
 }
