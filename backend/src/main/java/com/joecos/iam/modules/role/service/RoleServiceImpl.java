@@ -1,5 +1,7 @@
 package com.joecos.iam.modules.role.service;
 
+import com.joecos.iam.common.constant.ErrorCode;
+import com.joecos.iam.common.exception.BusinessException;
 import com.joecos.iam.infrastructure.persistence.entity.*;
 import com.joecos.iam.infrastructure.persistence.mapper.*;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -18,11 +20,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class RoleServiceImpl implements RoleService {
+
     private final RoleMapper roleMapper;
     private final RolePermissionMapper rolePermissionMapper;
     private final PermissionMapper permissionMapper;
     private final PermissionService permissionService;
-
 
     /**
      * 查询单个 ID 对应的角色
@@ -31,10 +33,10 @@ public class RoleServiceImpl implements RoleService {
      * */
     @Override
     public RoleEntity findById(Integer roleId) {
-        LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(RoleEntity::getId, roleId);
-
-        return roleMapper.selectOne(wrapper);
+        if (roleId == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Role id cannot be null");
+        }
+        return roleMapper.selectById(roleId);
     }
 
     /**
@@ -44,14 +46,12 @@ public class RoleServiceImpl implements RoleService {
      * */
     @Override
     public List<RoleEntity> findByIds(List<Integer> roleIds) {
-
         if (roleIds == null || roleIds.isEmpty()) {
             return new ArrayList<>();
         }
 
         LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.in(RoleEntity::getId, roleIds);
-
         return roleMapper.selectList(wrapper);
     }
 
@@ -62,9 +62,12 @@ public class RoleServiceImpl implements RoleService {
      * */
     @Override
     public RoleEntity findByName(String roleName) {
+        if (roleName == null || roleName.isBlank()) {
+            return null;
+        }
+
         LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RoleEntity::getRoleName, roleName);
-
         return roleMapper.selectOne(wrapper);
     }
 
@@ -72,13 +75,15 @@ public class RoleServiceImpl implements RoleService {
      * 查询单个代码对应的身份组
      *
      * @param roleCode 身份组代码
-     *
-     */
+     * */
     @Override
     public RoleEntity findByCode(Integer roleCode) {
+        if (roleCode == null) {
+            return null;
+        }
+
         LambdaQueryWrapper<RoleEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RoleEntity::getRoleCode, roleCode);
-
         return roleMapper.selectOne(wrapper);
     }
 
@@ -89,29 +94,21 @@ public class RoleServiceImpl implements RoleService {
      * */
     @Override
     public List<PermissionEntity> findRolePermissions(Integer roleId) {
+        assertRoleExists(roleId);
 
-        // 查询角色权限记录
-        LambdaQueryWrapper<RolePermissionEntity> rolePermissionWrapper =
-                new LambdaQueryWrapper<>();
-
+        LambdaQueryWrapper<RolePermissionEntity> rolePermissionWrapper = new LambdaQueryWrapper<>();
         rolePermissionWrapper.eq(RolePermissionEntity::getRoleId, roleId);
 
-        List<RolePermissionEntity> rolePermissions =
-                rolePermissionMapper.selectList(rolePermissionWrapper);
-
+        List<RolePermissionEntity> rolePermissions = rolePermissionMapper.selectList(rolePermissionWrapper);
         if (rolePermissions.isEmpty()) {
             return new ArrayList<>();
         }
 
-        // 提取 permissionId
         List<Integer> permissionIds = rolePermissions.stream()
                 .map(RolePermissionEntity::getPermissionId)
                 .toList();
 
-        // 查询权限
-        LambdaQueryWrapper<PermissionEntity> permissionWrapper =
-                new LambdaQueryWrapper<>();
-
+        LambdaQueryWrapper<PermissionEntity> permissionWrapper = new LambdaQueryWrapper<>();
         permissionWrapper.in(PermissionEntity::getId, permissionIds);
 
         return permissionMapper.selectList(permissionWrapper);
@@ -124,10 +121,7 @@ public class RoleServiceImpl implements RoleService {
      * */
     @Override
     public List<String> findPermissionCodes(Integer roleId) {
-
-        List<PermissionEntity> permissions = findRolePermissions(roleId);
-
-        return permissions.stream()
+        return findRolePermissions(roleId).stream()
                 .map(PermissionEntity::getPermissionCode)
                 .toList();
     }
@@ -135,15 +129,20 @@ public class RoleServiceImpl implements RoleService {
     /**
      * 更新身份组权限
      *
-     * @param roleId             身份组 ID
+     * @param roleId 身份组 ID
      * @param newPermissionCodes 新的权限列表
-     *
-     */
+     * */
     @Override
     public void updateRolePermissions(Integer roleId, List<String> newPermissionCodes) {
+        assertRoleExists(roleId);
+
         LambdaQueryWrapper<RolePermissionEntity> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(RolePermissionEntity::getRoleId, roleId);
         rolePermissionMapper.delete(wrapper);
+
+        if (newPermissionCodes == null || newPermissionCodes.isEmpty()) {
+            return;
+        }
 
         newPermissionCodes.stream()
                 .map(permissionService::findPermissionIdByCode)
@@ -162,62 +161,82 @@ public class RoleServiceImpl implements RoleService {
         return roleMapper.selectList(null);
     }
 
-    /**
-     * 根据 ID 删除身份组
+    /** 根据 ID 删除身份组
      *
      * @param roleId 身份组 ID
-     *
-     */
+     * */
     @Override
     public void deleteRoleById(Integer roleId) {
+        assertRoleExists(roleId);
+
         LambdaQueryWrapper<RolePermissionEntity> rolePermissionWrapper = new LambdaQueryWrapper<>();
         rolePermissionWrapper.eq(RolePermissionEntity::getRoleId, roleId);
         rolePermissionMapper.delete(rolePermissionWrapper);
 
-        LambdaQueryWrapper<RoleEntity> roleWrapper = new LambdaQueryWrapper<>();
-        roleWrapper.eq(RoleEntity::getId, roleId);
-        roleMapper.delete(roleWrapper);
+        roleMapper.deleteById(roleId);
+    }
+
+    /**
+     * 校验身份组是否存在。
+     *
+     * @param roleId 身份组 ID
+     */
+    private void assertRoleExists(Integer roleId) {
+        if (findById(roleId) == null) {
+            throw new BusinessException(ErrorCode.ROLE_NOT_FOUND);
+        }
+    }
+
+    /**
+     * 查询并返回指定身份组；若身份组不存在则抛出异常。
+     *
+     * @param roleId 身份组 ID
+     */
+    private RoleEntity requireRole(Integer roleId) {
+        RoleEntity role = findById(roleId);
+        if (role == null) {
+            throw new BusinessException(ErrorCode.ROLE_NOT_FOUND);
+        }
+        return role;
     }
 
     /**
      * API-赋予身份组权限
      *
-     * @param roleId  身份组 ID
+     * @param roleId 身份组 ID
      * @param request AssignRolePermissionRequest
-     *
-     */
+     * */
     @Override
     public void assignRolePermission(Integer roleId, AssignRolePermissionRequest request) {
-        List<String> newPermissionCodes = request.getPermissionCodes();
+        if (request == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Request cannot be null");
+        }
 
-        updateRolePermissions(roleId, newPermissionCodes);
-
+        updateRolePermissions(roleId, request.getPermissionCodes());
     }
 
     /**
-     * API-查询完整角色列表
-     *
-     *
-     */
+     * API-查询完整身份组列表
+     * */
     @Override
     public List<RoleDTO> getAllRoles() {
-        List<RoleEntity> roles = findAllRoles();
-
-        return roles.stream()
-                .map(role ->
-                        new RoleDTO(role.getId(), role.getRoleName(), role.getDescription())
-                ).toList();
+        return findAllRoles().stream()
+                .map(role -> new RoleDTO(
+                        role.getId(),
+                        role.getRoleName(),
+                        role.getDescription()
+                ))
+                .toList();
     }
 
     /**
      * API-查询单个身份组信息
      *
      * @param roleId 身份组 ID
-     *
-     */
+     * */
     @Override
     public RoleDTO getRoleById(Integer roleId) {
-        RoleEntity role = findById(roleId);
+        RoleEntity role = requireRole(roleId);
         return new RoleDTO(role.getId(), role.getRoleName(), role.getDescription());
     }
 
@@ -225,35 +244,38 @@ public class RoleServiceImpl implements RoleService {
      * API-查询身份组权限
      *
      * @param roleId 身份组 ID
-     *
-     */
+     * */
     @Override
     public List<PermissionDTO> getRolePermissions(Integer roleId) {
-        List<PermissionEntity> permissions = findRolePermissions(roleId);
-
-        return permissions.stream()
-                .map(permission ->
-                        new PermissionDTO(permission.getId(), permission.getPermissionName())
-                ).toList();
+        return findRolePermissions(roleId).stream()
+                .map(permission -> new PermissionDTO(
+                        permission.getId(),
+                        permission.getPermissionName()
+                ))
+                .toList();
     }
 
     /**
      * API-更新身份组信息
      *
-     * @param roleId  身份组 ID
+     * @param roleId 身份组 ID
      * @param request UpdateRoleRequest
-     *
-     */
+     * */
     @Override
     public void updateRoleInfo(Integer roleId, UpdateRoleInfoRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Request cannot be null");
+        }
+
+        RoleEntity role = requireRole(roleId);
+
         String newRoleName = request.getRoleName();
         String newRoleDesc = request.getRoleDesc();
 
-        RoleEntity role = findById(roleId);
-
-        if (newRoleName != null) {
-            if (findByName(newRoleName) != null) {
-                throw new RuntimeException("Role name exists!");
+        if (newRoleName != null && !newRoleName.isBlank()) {
+            RoleEntity existedRole = findByName(newRoleName);
+            if (existedRole != null && !existedRole.getId().equals(roleId)) {
+                throw new BusinessException(ErrorCode.ROLE_NAME_OCCUPIED);
             }
             role.setRoleName(newRoleName);
         }
@@ -269,22 +291,25 @@ public class RoleServiceImpl implements RoleService {
      * API-创建新身份组
      *
      * @param request CreateRoleRequest
-     *
-     */
+     * */
     @Override
     public Integer createRole(CreateRoleRequest request) {
-        RoleEntity newRole = new RoleEntity();
+        if (request == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Request cannot be null");
+        }
 
         if (findByName(request.getRoleName()) != null) {
-            throw new RuntimeException("Role name exists!");
-        }
-        if (findByCode(request.getRoleCode()) != null) {
-            throw new RuntimeException("Role code exists!");
+            throw new BusinessException(ErrorCode.ROLE_NAME_OCCUPIED);
         }
 
-        newRole.setDescription(request.getRoleDesc());
+        if (findByCode(request.getRoleCode()) != null) {
+            throw new BusinessException(ErrorCode.ROLE_CODE_OCCUPIED);
+        }
+
+        RoleEntity newRole = new RoleEntity();
         newRole.setRoleName(request.getRoleName());
         newRole.setRoleCode(request.getRoleCode());
+        newRole.setDescription(request.getRoleDesc());
 
         roleMapper.insert(newRole);
         return newRole.getId();
@@ -294,12 +319,9 @@ public class RoleServiceImpl implements RoleService {
      * API-删除身份组
      *
      * @param roleId 身份组 ID
-     *
-     */
+     * */
     @Override
     public void deleteRole(Integer roleId) {
-        if (findById(roleId) != null) {
-            deleteRoleById(roleId);
-        }
+        deleteRoleById(roleId);
     }
 }
