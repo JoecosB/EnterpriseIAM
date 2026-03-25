@@ -1,5 +1,6 @@
 package com.joecos.iam.modules.auth.controller;
 
+import com.joecos.iam.common.api.ApiResponse;
 import com.joecos.iam.modules.auth.model.*;
 import com.joecos.iam.modules.auth.model.Login.LoginRequest;
 import com.joecos.iam.modules.auth.model.Login.LoginResponse;
@@ -19,8 +20,9 @@ public class AuthController {
     private final AuthService authService;
     private final JwtService jwtService;
 
+
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
@@ -35,11 +37,11 @@ public class AuthController {
         loginResponse.setToken(token);
         loginResponse.setUser(user);
 
-        return loginResponse;
+        return ApiResponse.success(loginResponse);
     }
 
     @GetMapping("/me")
-    public AuthResult me() {
+    public ApiResponse<AuthResult> me() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || authentication.getPrincipal() == null) {
@@ -52,6 +54,8 @@ public class AuthController {
             throw new RuntimeException("Invalid authentication principal");
         }
 
-        return authService.loadUserById(userPrincipal.getUserId());
+        return ApiResponse.success(
+                authService.loadUserById(userPrincipal.getUserId())
+        );
     }
 }

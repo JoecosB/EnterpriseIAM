@@ -1,5 +1,8 @@
 package com.joecos.iam.common.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
     // 通用错误
     SYSTEM_ERROR(5000, "System error"),
@@ -35,11 +38,4 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    public Integer getCode() {
-        return code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
 }

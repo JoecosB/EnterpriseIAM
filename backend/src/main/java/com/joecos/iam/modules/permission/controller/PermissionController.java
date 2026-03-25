@@ -1,5 +1,6 @@
 package com.joecos.iam.modules.permission.controller;
 
+import com.joecos.iam.common.api.ApiResponse;
 import com.joecos.iam.infrastructure.persistence.entity.PermissionEntity;
 import com.joecos.iam.modules.permission.model.PermissionTree;
 import com.joecos.iam.modules.permission.model.respond.PermissionDTO;
@@ -22,21 +23,27 @@ public class PermissionController {
     /** 查询完整权限列表 */
     @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping
-    public List<PermissionDTO> getAllPermissions() {
-        return permissionService.getAllPermissions();
+    public ApiResponse<List<PermissionDTO>> getAllPermissions() {
+        return ApiResponse.success(
+                permissionService.getAllPermissions()
+        );
     }
 
     /** 通过 ID 查询单个权限 */
     @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping("/{id}")
-    public PermissionDTO getPermissionById(@PathVariable Integer id) {
-        return permissionService.getPermissionById(id);
+    public ApiResponse<PermissionDTO> getPermissionById(@PathVariable Integer id) {
+        return ApiResponse.success(
+                permissionService.getPermissionById(id)
+        );
     }
 
     /** 查询系统权限树 */
     @PreAuthorize("hasAuthority('permission:list')")
     @GetMapping("/tree")
-    public List<PermissionTree> getFullPermissionTree() {
-        return permissionService.getFullPermissionTree();
+    public ApiResponse<List<PermissionTree>> getFullPermissionTree() {
+        return ApiResponse.success(
+                permissionService.getFullPermissionTree()
+        );
     }
 }
